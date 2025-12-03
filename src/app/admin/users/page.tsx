@@ -34,6 +34,9 @@ export default function AdminUsersPage() {
     const [showEditModal, setShowEditModal] = useState(false);
     const [showBanModal, setShowBanModal] = useState(false);
 
+    // Current user state for permissions
+    const [currentUser, setCurrentUser] = useState<User | null>(null);
+
     // Edit form state
     const [editForm, setEditForm] = useState<{
         role: string;
@@ -51,8 +54,21 @@ export default function AdminUsersPage() {
     const [banDuration, setBanDuration] = useState<number>(60); // minutes
 
     useEffect(() => {
+        fetchCurrentUser();
         fetchUsers();
     }, []);
+
+    async function fetchCurrentUser() {
+        try {
+            const res = await fetch("/api/user/me");
+            const data = await res.json();
+            if (res.ok) {
+                setCurrentUser(data.user);
+            }
+        } catch (err) {
+            console.error("Failed to fetch current user:", err);
+        }
+    }
 
     async function fetchUsers() {
         try {
@@ -374,23 +390,29 @@ export default function AdminUsersPage() {
                                                         >
                                                             View
                                                         </button>
-                                                        <span className="text-slate-300">|</span>
-                                                        <button
-                                                            onClick={() => openEditModal(user)}
-                                                            className="text-emerald-600 hover:text-emerald-800 font-medium text-sm"
-                                                            title="Edit User"
-                                                        >
-                                                            Edit
-                                                        </button>
-                                                        <span className="text-slate-300">|</span>
-                                                        <button
-                                                            onClick={() => openBanModal(user)}
-                                                            className={`font-medium text-sm ${user.isBanned ? "text-green-600 hover:text-green-800" : "text-red-600 hover:text-red-800"
-                                                                }`}
-                                                            title={user.isBanned ? "Unban User" : "Ban User"}
-                                                        >
-                                                            {user.isBanned ? "Unban" : "Ban"}
-                                                        </button>
+
+                                                        {/* Only show Edit/Ban if allowed */}
+                                                        {(currentUser?.role === "superadmin" || (currentUser?.role === "admin" && user.role === "student")) && (
+                                                            <>
+                                                                <span className="text-slate-300">|</span>
+                                                                <button
+                                                                    onClick={() => openEditModal(user)}
+                                                                    className="text-emerald-600 hover:text-emerald-800 font-medium text-sm"
+                                                                    title="Edit User"
+                                                                >
+                                                                    Edit
+                                                                </button>
+                                                                <span className="text-slate-300">|</span>
+                                                                <button
+                                                                    onClick={() => openBanModal(user)}
+                                                                    className={`font-medium text-sm ${user.isBanned ? "text-green-600 hover:text-green-800" : "text-red-600 hover:text-red-800"
+                                                                        }`}
+                                                                    title={user.isBanned ? "Unban User" : "Ban User"}
+                                                                >
+                                                                    {user.isBanned ? "Unban" : "Ban"}
+                                                                </button>
+                                                            </>
+                                                        )}
                                                     </div>
                                                 </td>
                                             </tr>
@@ -510,8 +532,12 @@ export default function AdminUsersPage() {
                                     className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 >
                                     <option value="student">Student</option>
-                                    <option value="admin">Admin</option>
-                                    <option value="superadmin">Super Admin</option>
+                                    {currentUser?.role === "superadmin" && (
+                                        <>
+                                            <option value="admin">Admin</option>
+                                            <option value="superadmin">Super Admin</option>
+                                        </>
+                                    )}
                                 </select>
                             </div>
 

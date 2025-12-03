@@ -74,6 +74,14 @@ export async function POST(req: Request) {
       return NextResponse.json({ msg: "User not found" }, { status: 404 });
     }
 
+    // 🔒 Security: Admins can ONLY edit students
+    if (adminUser.role === "admin" && targetUser.role !== "student") {
+      return NextResponse.json(
+        { msg: "Admins can only edit students" },
+        { status: 403 }
+      );
+    }
+
     const oldData = {
       name: targetUser.name,
       email: targetUser.email,
