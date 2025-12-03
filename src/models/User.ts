@@ -45,7 +45,7 @@ const UserSchema: Schema<IUser> = new Schema(
 
     role: {
       type: String,
-      enum: ["student", "admin", "superadmin"],
+      enum: ["student", "admin", "superadmin", "tester"],
       default: "student",
     },
 
@@ -84,13 +84,13 @@ const UserSchema: Schema<IUser> = new Schema(
       type: Date,
       default: null,
     },
-    hideContacts: 
-    { type: Boolean, default: false },
+    hideContacts:
+      { type: Boolean, default: false },
 
   },
   { timestamps: true }
 
-  
+
 );
 
 const User: Model<IUser> =

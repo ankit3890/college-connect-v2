@@ -63,7 +63,7 @@ export async function POST(req: Request) {
       mobileNumber?: string;
       branch?: string;
       year?: number;
-      role?: "student" | "admin" | "superadmin";
+      role?: "student" | "admin" | "superadmin" | "tester";
     };
 
     if (!userId) {
@@ -75,9 +75,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ msg: "User not found" }, { status: 404 });
     }
 
-    // 🔒 Security: Admins can ONLY edit students OR themselves
+    // 🔒 Security: Admins can ONLY edit students, testers OR themselves
     const isSelf = adminUser._id.equals(targetUser._id);
-    if (adminUser.role === "admin" && targetUser.role !== "student" && !isSelf) {
+    if (adminUser.role === "admin" && targetUser.role !== "student" && targetUser.role !== "tester" && !isSelf) {
       return NextResponse.json(
         { msg: "Admin cannot edit role of other admin or superadmin" },
         { status: 403 }

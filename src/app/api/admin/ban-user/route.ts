@@ -66,8 +66,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ msg: "User not found" }, { status: 404 });
     }
 
-    // 🔒 Security: Admins can ONLY ban students
-    if (adminUser.role === "admin" && targetUser.role !== "student") {
+    // 🔒 Security: Admins can ONLY ban students or testers
+    if (adminUser.role === "admin" && targetUser.role !== "student" && targetUser.role !== "tester") {
       return NextResponse.json(
         { msg: "Admin cannot ban other admin or superadmin" },
         { status: 403 }

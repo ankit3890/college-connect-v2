@@ -111,6 +111,8 @@ export default function AdminUsersPage() {
                 return "bg-purple-100 text-purple-800 border-purple-300";
             case "admin":
                 return "bg-blue-100 text-blue-800 border-blue-300";
+            case "tester":
+                return "bg-orange-100 text-orange-800 border-orange-300";
             default:
                 return "bg-emerald-100 text-emerald-800 border-emerald-300";
         }
@@ -250,6 +252,13 @@ export default function AdminUsersPage() {
                             >
                                 Admins
                             </button>
+                            <button
+                                onClick={() => setFilter("tester")}
+                                className={`px-4 py-2 rounded-lg font-medium transition-colors ${filter === "tester" ? "bg-orange-600 text-white" : "bg-orange-50 text-orange-700 hover:bg-orange-100"
+                                    }`}
+                            >
+                                Testers
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -341,7 +350,7 @@ export default function AdminUsersPage() {
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full border ${getRoleBadge(user.role)}`}>
-                                                        {user.role === "superadmin" ? "Super Admin" : user.role === "admin" ? "Admin" : "Student"}
+                                                        {user.role === "superadmin" ? "Super Admin" : user.role === "admin" ? "Admin" : user.role === "tester" ? "Tester" : "Student"}
                                                     </span>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
@@ -398,7 +407,7 @@ export default function AdminUsersPage() {
                                                         </button>
 
                                                         {/* Only show Edit/Ban if allowed */}
-                                                        {(currentUser?.role === "superadmin" || (currentUser?.role === "admin" && (user.role === "student" || user._id === currentUser._id))) && (
+                                                        {(currentUser?.role === "superadmin" || (currentUser?.role === "admin" && (user.role === "student" || user.role === "tester" || user._id === currentUser._id))) && (
                                                             <>
                                                                 <span className="text-slate-300">|</span>
                                                                 <button
@@ -475,7 +484,7 @@ export default function AdminUsersPage() {
                                 <div>
                                     <p className="text-sm text-slate-500">Role</p>
                                     <p className="font-medium">
-                                        {selectedUser.role === "superadmin" ? "Super Admin" : selectedUser.role === "admin" ? "Admin" : "Student"}
+                                        {selectedUser.role === "superadmin" ? "Super Admin" : selectedUser.role === "admin" ? "Admin" : selectedUser.role === "tester" ? "Tester" : "Student"}
                                     </p>
                                 </div>
                                 <div>
@@ -560,6 +569,7 @@ export default function AdminUsersPage() {
                                     className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 >
                                     <option value="student">Student</option>
+                                    <option value="tester">Tester</option>
                                     {currentUser?.role === "superadmin" && (
                                         <>
                                             <option value="admin">Admin</option>
