@@ -22,9 +22,13 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         }
 
         console.log(`[Syllabus Subject] Document not found for ID: ${id}`);
-        return new NextResponse("not found", { status: 404 });
-    } catch (err) {
+        return NextResponse.json({ error: "Document not found", id }, { status: 404 });
+    } catch (err: any) {
         console.error("[Syllabus Subject] Error:", err);
-        return new NextResponse("error", { status: 500 });
+        return NextResponse.json({
+            error: "Internal Server Error",
+            details: err.message,
+            stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
+        }, { status: 500 });
     }
 }

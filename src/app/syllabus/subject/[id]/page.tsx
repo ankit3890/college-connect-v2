@@ -7,11 +7,17 @@ async function getSubjectData(id: string) {
         const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
             || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
         const res = await fetch(`${baseUrl}/api/syllabus/subject/${id}`, { cache: 'no-store' });
-        if (!res.ok) return null;
+
+        if (!res.ok) {
+            const text = await res.text();
+            console.error(`[SubjectPage] API Error: ${res.status} - ${text}`);
+            return { error: true, status: res.status, message: text };
+        }
+
         return await res.json();
-    } catch (e) {
-        console.error(e);
-        return null;
+    } catch (e: any) {
+        console.error("[SubjectPage] Fetch Error:", e);
+        return { error: true, message: e.message };
     }
 }
 
