@@ -58,6 +58,7 @@ export async function POST(req: Request) {
     } = body as {
       userId: string;
       studentId?: string;
+      username?: string;
       name?: string;
       email?: string;
       mobileNumber?: string;
@@ -86,6 +87,7 @@ export async function POST(req: Request) {
 
     const oldData = {
       studentId: targetUser.studentId,
+      username: targetUser.username,
       name: targetUser.name,
       email: targetUser.email,
       mobileNumber: targetUser.mobileNumber,
@@ -94,15 +96,26 @@ export async function POST(req: Request) {
       role: targetUser.role,
     };
 
-    if (body.studentId && body.studentId !== targetUser.studentId) {
-      const existing = await User.findOne({ studentId: body.studentId });
-      if (existing) {
-        return NextResponse.json({ msg: "Student ID already taken" }, { status: 400 });
+    // 🔒 Security: Only Super Admin can change Student ID or Name
+    if (adminUser.role === "superadmin") {
+      if (body.studentId && body.studentId !== targetUser.studentId) {
+        const existing = await User.findOne({ studentId: body.studentId });
+        if (existing) {
+          return NextResponse.json({ msg: "Student ID already taken" }, { status: 400 });
+        }
+        targetUser.studentId = body.studentId;
       }
-      targetUser.studentId = body.studentId;
+      if (typeof name === "string") targetUser.name = name;
     }
 
-    if (typeof name === "string") targetUser.name = name;
+    // Username update (Allowed for Admin & Super Admin)
+    if (body.username && body.username !== targetUser.username) {
+      const existing = await User.findOne({ username: body.username });
+      if (existing) {
+        return NextResponse.json({ msg: "Username already taken" }, { status: 400 });
+      }
+      targetUser.username = body.username;
+    }
     if (typeof email === "string") targetUser.email = email;
     if (typeof mobileNumber === "string") targetUser.mobileNumber = mobileNumber;
     if (typeof branch === "string") targetUser.branch = branch;
@@ -125,7 +138,7 @@ export async function POST(req: Request) {
 
     // Build changedFields diff for UPDATE_USER
     const changedFields: Record<string, { from: any; to: any }> = {};
-    (["studentId", "name", "email", "mobileNumber", "branch", "year"] as const).forEach(
+    (["studentId", "username", "name", "email", "mobileNumber", "branch", "year"] as const).forEach(
       (key) => {
         const before = (oldData as any)[key];
         const after = (targetUser as any)[key];

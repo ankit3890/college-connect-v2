@@ -38,14 +38,17 @@ export default function AdminUsersPage() {
     const [currentUser, setCurrentUser] = useState<User | null>(null);
 
     // Edit form state
+    // Edit form state
     const [editForm, setEditForm] = useState<{
         studentId: string;
+        username: string;
         name: string;
         role: string;
         branch: string;
         year: number | string;
     }>({
         studentId: "",
+        username: "",
         name: "",
         role: "",
         branch: "",
@@ -127,6 +130,7 @@ export default function AdminUsersPage() {
         setSelectedUser(user);
         setEditForm({
             studentId: user.studentId || "",
+            username: user.username || "",
             name: user.name || "",
             role: user.role || "student",
             branch: user.branch || "",
@@ -540,12 +544,13 @@ export default function AdminUsersPage() {
                         </div>
                         <div className="p-6 space-y-4">
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-2">Student ID (Username)</label>
+                                <label className="block text-sm font-medium text-slate-700 mb-2">Student ID (Cybervidya ID)</label>
                                 <input
                                     type="text"
                                     value={editForm.studentId}
+                                    disabled={currentUser?.role !== "superadmin"}
                                     onChange={(e) => setEditForm({ ...editForm, studentId: e.target.value })}
-                                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className={`w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${currentUser?.role !== "superadmin" ? "bg-slate-100 text-slate-500 cursor-not-allowed" : ""}`}
                                     placeholder="202412345678901"
                                 />
                             </div>
@@ -555,9 +560,21 @@ export default function AdminUsersPage() {
                                 <input
                                     type="text"
                                     value={editForm.name}
+                                    disabled={currentUser?.role !== "superadmin"}
                                     onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className={`w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${currentUser?.role !== "superadmin" ? "bg-slate-100 text-slate-500 cursor-not-allowed" : ""}`}
                                     placeholder="John Doe"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-slate-700 mb-2">Username</label>
+                                <input
+                                    type="text"
+                                    value={editForm.username}
+                                    onChange={(e) => setEditForm({ ...editForm, username: e.target.value })}
+                                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    placeholder="@username"
                                 />
                             </div>
 
