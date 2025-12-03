@@ -597,9 +597,9 @@ export default function AdminUsersPage() {
                                 <input
                                     type="text"
                                     value={editForm.studentId}
-                                    disabled={currentUser?.role !== "superadmin"}
+                                    disabled={true}
                                     onChange={(e) => setEditForm({ ...editForm, studentId: e.target.value })}
-                                    className={`w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${currentUser?.role !== "superadmin" ? "bg-slate-100 text-slate-500 cursor-not-allowed" : ""}`}
+                                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-slate-100 text-slate-500 cursor-not-allowed"
                                     placeholder="202412345678901"
                                 />
                             </div>
@@ -609,9 +609,9 @@ export default function AdminUsersPage() {
                                 <input
                                     type="text"
                                     value={editForm.name}
-                                    disabled={currentUser?.role !== "superadmin"}
+                                    disabled={true}
                                     onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                                    className={`w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${currentUser?.role !== "superadmin" ? "bg-slate-100 text-slate-500 cursor-not-allowed" : ""}`}
+                                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-slate-100 text-slate-500 cursor-not-allowed"
                                     placeholder="John Doe"
                                 />
                             </div>

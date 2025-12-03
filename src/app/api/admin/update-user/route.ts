@@ -96,17 +96,9 @@ export async function POST(req: Request) {
       role: targetUser.role,
     };
 
-    // 🔒 Security: Only Super Admin can change Student ID or Name
-    if (adminUser.role === "superadmin") {
-      if (body.studentId && body.studentId !== targetUser.studentId) {
-        const existing = await User.findOne({ studentId: body.studentId });
-        if (existing) {
-          return NextResponse.json({ msg: "Student ID already taken" }, { status: 400 });
-        }
-        targetUser.studentId = body.studentId;
-      }
-      if (typeof name === "string") targetUser.name = name;
-    }
+    // 🔒 Security: Student ID and Name are IMMUTABLE for everyone via this API
+    // (Previously allowed for Super Admin, now restricted as per request)
+    // if (adminUser.role === "superadmin") { ... } -> REMOVED
 
     // Username update (Allowed for Admin & Super Admin)
     if (body.username && body.username !== targetUser.username) {
