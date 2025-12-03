@@ -23,10 +23,11 @@ function getTokenFromRequest(req: Request): string | null {
 
 export async function GET(
     req: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
         await connectDB();
+        const { id } = await params;
 
         const token = getTokenFromRequest(req);
         if (!token) {
@@ -43,7 +44,7 @@ export async function GET(
             return NextResponse.json({ msg: "Requester not found" }, { status: 404 });
         }
 
-        const targetId = params.id;
+        const targetId = id;
 
         // Access Control:
         // 1. User can view their own profile
