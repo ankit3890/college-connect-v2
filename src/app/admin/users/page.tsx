@@ -34,6 +34,7 @@ export default function AdminUsersPage() {
     const [showProfileModal, setShowProfileModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
     const [showBanModal, setShowBanModal] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
 
     // Current user state for permissions
     const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -148,6 +149,11 @@ export default function AdminUsersPage() {
         setShowBanModal(true);
     }
 
+    function openDeleteModal(user: User) {
+        setSelectedUser(user);
+        setShowDeleteModal(true);
+    }
+
     async function handleBanUser() {
         if (!selectedUser) return;
 
@@ -196,6 +202,32 @@ export default function AdminUsersPage() {
             }
         } catch (err) {
             console.error("Failed to update user:", err);
+        }
+    }
+
+    async function handleDeleteUser() {
+        if (!selectedUser) return;
+
+        try {
+            const res = await fetch("/api/admin/delete-user", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    userId: selectedUser._id,
+                }),
+            });
+
+            if (res.ok) {
+                await fetchUsers();
+                setShowDeleteModal(false);
+                setSelectedUser(null);
+            } else {
+                const data = await res.json();
+                alert(data.msg || "Failed to delete user");
+            }
+        } catch (err) {
+            console.error("Failed to delete user:", err);
+            alert("Server error");
         }
     }
 
@@ -433,6 +465,22 @@ export default function AdminUsersPage() {
                                                                 </button>
                                                             </>
                                                         )}
+
+                                                        {/* Delete button for Super Admin only, and NOT for admins */}
+                                                        {currentUser?.role === "superadmin" && user.role !== "admin" && user.role !== "superadmin" && (
+                                                            <>
+                                                                <span className="text-slate-300">|</span>
+                                                                <button
+                                                                    onClick={() => openDeleteModal(user)}
+                                                                    className="text-slate-500 hover:text-red-600 font-medium text-sm"
+                                                                    title="Delete User"
+                                                                >
+                                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                                    </svg>
+                                                                </button>
+                                                            </>
+                                                        )}
                                                     </div>
                                                 </td>
                                             </tr>
@@ -632,6 +680,55 @@ export default function AdminUsersPage() {
                                     className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700"
                                 >
                                     Save Changes
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Delete Modal */}
+            {showDeleteModal && selectedUser && (
+                <div className="fixed inset-0 bg-black/30 backdrop-blur-md flex items-center justify-center z-50 p-4">
+                    <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full border-2 border-black">
+                        <div className="p-6 border-b border-slate-200">
+                            <div className="flex items-center justify-between">
+                                <h2 className="text-2xl font-bold text-slate-900">Delete User</h2>
+                                <button
+                                    onClick={() => setShowDeleteModal(false)}
+                                    className="text-slate-400 hover:text-slate-600"
+                                >
+                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div className="p-6 space-y-4">
+                            <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start gap-3">
+                                <svg className="w-6 h-6 text-red-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                </svg>
+                                <div>
+                                    <h3 className="text-red-800 font-semibold">Warning: Irreversible Action</h3>
+                                    <p className="text-red-700 text-sm mt-1">
+                                        You are about to permanently delete <strong>{selectedUser.name || selectedUser.studentId}</strong>. This action cannot be undone.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="flex gap-3 pt-4">
+                                <button
+                                    onClick={() => setShowDeleteModal(false)}
+                                    className="flex-1 px-4 py-2 border border-slate-300 rounded-lg font-medium text-slate-700 hover:bg-slate-50"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={handleDeleteUser}
+                                    className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700"
+                                >
+                                    Delete User
                                 </button>
                             </div>
                         </div>
