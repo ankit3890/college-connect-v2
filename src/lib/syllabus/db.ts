@@ -7,15 +7,15 @@ let modelsLoaded = false;
 
 export async function connectDb() {
     try {
-        if (mongoose.connection.readyState >= 1) {
-            return;
-        }
-
-        // Import models only when connecting (not at build time)
+        // Import models first (before checking connection state)
         if (!modelsLoaded) {
             await import("@/models/syllabus/Document");
             await import("@/models/syllabus/Page");
             modelsLoaded = true;
+        }
+
+        if (mongoose.connection.readyState >= 1) {
+            return;
         }
 
         console.log("Connecting to Mongo with URI:", MONGO_URI.replace(/:([^:@]+)@/, ":****@"));

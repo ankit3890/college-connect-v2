@@ -1,14 +1,16 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { connectDb } from "@/lib/syllabus/db";
-import { PageModel } from "@/models/syllabus/Page";
-import { DocumentModel } from "@/models/syllabus/Document"; // Ensure schema is registered
+import mongoose from "mongoose";
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
     try {
         await connectDb();
+
+        // Access models after they're registered
+        const PageModel = mongoose.model("Page");
 
         const searchParams = req.nextUrl.searchParams;
         const q = searchParams.get("q") || "";
