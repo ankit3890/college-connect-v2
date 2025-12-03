@@ -4,7 +4,10 @@ import DocPreview from "@/components/syllabus_components/DocPreview";
 
 async function getSubjectData(id: string) {
     try {
-        const res = await fetch(`http://localhost:3000/api/syllabus/subject/${id}`, { cache: 'no-store' });
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.VERCEL_URL
+            ? `https://${process.env.VERCEL_URL}`
+            : 'http://localhost:3000';
+        const res = await fetch(`${baseUrl}/api/syllabus/subject/${id}`, { cache: 'no-store' });
         if (!res.ok) return null;
         return await res.json();
     } catch (e) {
