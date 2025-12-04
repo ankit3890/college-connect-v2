@@ -436,7 +436,7 @@ export default function AdminUsersPage() {
                                                 <td className="px-6 py-4">
                                                     <div className="flex items-center justify-center gap-2">
                                                         <Link
-                                                            href={`/profile/${user._id}`}
+                                                            href={`/u/${user.username || user.studentId}`} // Fallback to studentId if username missing, though username should exist
                                                             target="_blank"
                                                             className="text-blue-600 hover:text-blue-800 font-medium text-sm"
                                                             title="View Profile"

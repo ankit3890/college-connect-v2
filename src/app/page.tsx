@@ -45,7 +45,7 @@ export default function HomePage() {
         {/* Main heading */}
         <section className="text-center space-y-3">
           <h1 className="text-3xl font-bold">
-            Welcome to <span className="text-green-600">CollegeConnect</span>
+            Welcome to <span className="text-blue-600">CollegeConnect</span>
           </h1>
           <p className="text-sm text-slate-500">
             One place for your college profile, upcoming chat system, AI
@@ -65,13 +65,13 @@ export default function HomePage() {
                 <div className="flex flex-col sm:flex-row gap-3 justify-center">
                   <Link
                     href="/login"
-                    className="rounded-md bg-green-600 px-6 py-2 text-sm font-semibold text-white hover:bg-green-700"
+                    className="rounded-md bg-black px-6 py-2 text-sm font-bold text-white hover:bg-slate-800 transition-colors"
                   >
                     Login
                   </Link>
                   <Link
                     href="/register"
-                    className="rounded-md border border-slate-300 px-6 py-2 text-sm font-semibold text-slate-800 hover:bg-slate-50"
+                    className="rounded-md border-2 border-black px-6 py-2 text-sm font-bold text-slate-900 hover:bg-slate-50 transition-colors"
                   >
                     Register
                   </Link>
@@ -94,12 +94,33 @@ export default function HomePage() {
           </>
         )}
 
+        {/* Connect Card - available to everyone */}
+        <section className="mt-8">
+          <div className="bg-white rounded-2xl shadow-lg p-6 border-2 border-black flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-slate-900">Connect with Friends</h3>
+                <p className="text-sm text-slate-500">Find classmates and follow their academic journey.</p>
+              </div>
+            </div>
+            <Link
+              href="/login"
+              className="px-6 py-2 bg-black text-white font-bold rounded-lg hover:bg-slate-800 transition-colors whitespace-nowrap"
+            >
+              Login to Access
+            </Link>
+          </div>
+        </section>
+
         {/* Feature cards - available to everyone */}
         <section className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
           {/* Attendance Card */}
           <Link
             href="/attendance"
-            className="group bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-all duration-200 border-2 border-transparent hover:border-blue-500"
+            className="group bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-all duration-200 border-2 border-black hover:border-blue-500"
           >
             <div className="flex items-start gap-4">
               <div className="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
@@ -127,7 +148,7 @@ export default function HomePage() {
           {/* Syllabus Card */}
           <Link
             href="/syllabus/search"
-            className="group bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-all duration-200 border-2 border-transparent hover:border-emerald-500"
+            className="group bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-all duration-200 border-2 border-black hover:border-emerald-500"
           >
             <div className="flex items-start gap-4">
               <div className="w-14 h-14 bg-emerald-100 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
@@ -155,7 +176,7 @@ export default function HomePage() {
           {/* Profile Card */}
           <Link
             href="/profile"
-            className="group bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-all duration-200 border-2 border-transparent hover:border-purple-500"
+            className="group bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-all duration-200 border-2 border-black hover:border-purple-500"
           >
             <div className="flex items-start gap-4">
               <div className="w-14 h-14 bg-purple-100 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
@@ -183,7 +204,7 @@ export default function HomePage() {
           {/* Settings Card */}
           <Link
             href="/settings"
-            className="group bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-all duration-200 border-2 border-transparent hover:border-slate-500"
+            className="group bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-all duration-200 border-2 border-black hover:border-slate-500"
           >
             <div className="flex items-start gap-4">
               <div className="w-14 h-14 bg-slate-100 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">

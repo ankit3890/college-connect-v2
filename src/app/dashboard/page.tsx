@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
+import UserSearch from "@/components/UserSearch";
 
 export default function DashboardPage() {
   return (
@@ -22,6 +23,11 @@ export default function DashboardPage() {
           <p className="text-slate-600">
             Welcome to CollegeConnect - Access your tools and resources
           </p>
+        </div>
+
+        {/* User Search */}
+        <div className="mb-8">
+          <UserSearch />
         </div>
 
         {/* Cards Grid */}

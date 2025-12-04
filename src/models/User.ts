@@ -25,6 +25,30 @@ export interface IUser extends Document {
   bannedUntil?: Date | null;
   lastActiveAt?: Date | null;
   hideContacts?: boolean;
+
+  // New Profile Fields
+  displayName?: string;
+  avatarUrl?: string;
+  bannerUrl?: string;
+  accentColor?: string;
+  bio?: string;
+  statusText?: string;
+  interests?: string[];
+  skills?: string[];
+  socials?: {
+    github?: string;
+    linkedin?: string;
+    website?: string;
+    instagram?: string;
+    twitter?: string;
+  };
+  isPublicProfile?: boolean;
+  showBranchYear?: boolean;
+  followersCount?: number;
+  followingCount?: number;
+
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 const UserSchema: Schema<IUser> = new Schema(
@@ -87,14 +111,72 @@ const UserSchema: Schema<IUser> = new Schema(
     hideContacts:
       { type: Boolean, default: false },
 
+    // --- NEW PROFILE FIELDS ---
+    displayName: { type: String },
+
+    avatarUrl: { type: String },
+    bannerUrl: { type: String },
+    accentColor: {
+      type: String,
+      default: "#3b82f6", // blue accent
+    },
+
+    bio: {
+      type: String,
+      default: "",
+      maxlength: 280,
+    },
+
+    statusText: {
+      type: String,
+      default: "",
+      maxlength: 80,
+    },
+
+    interests: {
+      type: [String],
+      default: [],
+    },
+
+    skills: {
+      type: [String],
+      default: [],
+    },
+
+    socials: {
+      github: { type: String, default: "" },
+      linkedin: { type: String, default: "" },
+      website: { type: String, default: "" },
+      instagram: { type: String, default: "" },
+      twitter: { type: String, default: "" },
+    },
+
+    // privacy preferences
+    isPublicProfile: {
+      type: Boolean,
+      default: true,
+    },
+    showBranchYear: {
+      type: Boolean,
+      default: true,
+    },
+
+    // social stats (for future follow system)
+    followersCount: {
+      type: Number,
+      default: 0,
+    },
+    followingCount: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true }
-
-
 );
 
+// Force new model compilation to ensure schema updates are applied
 const User: Model<IUser> =
-  mongoose.models.User || mongoose.model<IUser>("User", UserSchema);
+  mongoose.models.User_Fixed_V1 || mongoose.model<IUser>("User_Fixed_V1", UserSchema, "users");
 
 export default User;
 

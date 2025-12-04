@@ -349,9 +349,14 @@ export default function ProfilePage() {
                         </div>
                     </div>
                     <h1 className="text-3xl font-bold text-slate-900 mb-2">Profile</h1>
-                    <p className="text-slate-600">
+                    <p className="text-slate-600 mb-4">
                         Manage your CollegeConnect account and sync with CyberVidya.
                     </p>
+                    {user?.username && (
+                        <a href={`/u/${user.username}`} className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 rounded-full text-sm font-medium hover:bg-blue-100 transition-colors">
+                            View New Public Profile &rarr;
+                        </a>
+                    )}
                 </header>
 
                 {/* global message */}

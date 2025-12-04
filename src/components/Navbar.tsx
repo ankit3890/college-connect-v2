@@ -9,6 +9,7 @@ interface CurrentUser {
   name?: string;
   studentId?: string;
   role?: "student" | "admin" | "superadmin";
+  username?: string;
 }
 
 interface MaintenanceConfig {
@@ -44,6 +45,7 @@ export default function Navbar() {
         name: u.name || u.username || "",
         studentId: u.studentId,
         role: u.role,
+        username: u.username,
       });
       console.log("✅ User set:", u);
     } catch (err) {
@@ -142,7 +144,7 @@ export default function Navbar() {
                   Dashboard
                 </Link>
 
-                <Link href="/profile" className={linkClass("/profile")}>
+                <Link href={user.username ? `/u/${user.username}` : "/profile"} className={linkClass(user.username ? `/u/${user.username}` : "/profile")}>
                   Profile
                 </Link>
 
@@ -214,8 +216,8 @@ export default function Navbar() {
                 </Link>
 
                 <Link
-                  href="/profile"
-                  className={linkClass("/profile", true)}
+                  href={user.username ? `/u/${user.username}` : "/profile"}
+                  className={linkClass(user.username ? `/u/${user.username}` : "/profile", true)}
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Profile
