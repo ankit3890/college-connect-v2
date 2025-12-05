@@ -89,7 +89,7 @@ export async function POST(req: NextRequest) {
             {
                 success: true,
                 message: "Feedback submitted successfully!",
-                feedbackId: feedback._id,
+                feedbackId: String(feedback._id),
             },
             { status: 201 }
         );
