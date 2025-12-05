@@ -25,11 +25,14 @@ function getTokenFromRequest(req: Request): string | null {
 // GET all feedback (admin only)
 export async function GET(req: NextRequest) {
     try {
+        console.log("Admin feedback GET request started");
         await connectDB();
+        console.log("Database connected");
 
         // Verify authentication
         const token = getTokenFromRequest(req);
         if (!token) {
+            console.log("No token found");
             return NextResponse.json(
                 { error: "Authentication required" },
                 { status: 401 }
@@ -38,15 +41,21 @@ export async function GET(req: NextRequest) {
 
         const decoded = verifyToken<TokenPayload>(token);
         if (!decoded || !decoded.id) {
+            console.log("Invalid token");
             return NextResponse.json(
                 { error: "Invalid authentication token" },
                 { status: 401 }
             );
         }
 
+        console.log("Token decoded, user ID:", decoded.id);
+
         // Check if user is admin or superadmin
         const user = await User.findById(decoded.id);
+        console.log("User found:", user?.name, "Role:", user?.role);
+
         if (!user || (user.role !== "admin" && user.role !== "superadmin")) {
+            console.log("User is not admin/superadmin");
             return NextResponse.json(
                 { error: "Admin access required" },
                 { status: 403 }
@@ -54,16 +63,26 @@ export async function GET(req: NextRequest) {
         }
 
         // Get all feedback with user details
+        console.log("Fetching feedback from database...");
+        console.log("Feedback model:", Feedback.modelName);
+
         const feedbacks = await Feedback.find()
             .populate("userId", "name studentId email")
             .sort({ createdAt: -1 })
             .limit(200);
 
+        console.log(`Found ${feedbacks.length} feedback items`);
+        console.log("Sample feedback:", feedbacks[0]);
+
         return NextResponse.json({ feedbacks }, { status: 200 });
     } catch (error) {
         console.error("Feedback retrieval error:", error);
+        console.error("Error stack:", error instanceof Error ? error.stack : "No stack");
         return NextResponse.json(
-            { error: "Failed to retrieve feedback" },
+            {
+                error: "Failed to retrieve feedback",
+                details: error instanceof Error ? error.message : String(error)
+            },
             { status: 500 }
         );
     }
