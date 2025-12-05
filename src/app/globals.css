@@ -173,3 +173,10 @@
     border: 1px solid #e2e8f0 !important;
   }
 }
+/* Dark mode support for site-card-strong */
+.dark .site-card-strong {
+  border: 2px solid rgba(148, 163, 184, 0.3);
+  box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.3);
+  background: #1e293b;
+  color: white;
+}
