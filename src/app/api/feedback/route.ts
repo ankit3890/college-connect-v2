@@ -25,21 +25,19 @@ export async function POST(req: NextRequest) {
     try {
         await connectDB();
 
-        // Verify authentication
-        const token = getTokenFromRequest(req);
-        if (!token) {
-            return NextResponse.json(
-                { error: "Authentication required" },
-                { status: 401 }
-            );
-        }
+        // Get IP address
+        const forwarded = req.headers.get("x-forwarded-for");
+        const ip = forwarded ? forwarded.split(",")[0] : req.headers.get("x-real-ip") || "unknown";
 
-        const decoded = verifyToken<TokenPayload>(token);
-        if (!decoded || !decoded.id) {
-            return NextResponse.json(
-                { error: "Invalid authentication token" },
-                { status: 401 }
-            );
+        // Try to verify authentication (optional for feedback)
+        const token = getTokenFromRequest(req);
+        let userId: string | undefined;
+
+        if (token) {
+            const decoded = verifyToken<TokenPayload>(token);
+            if (decoded?.id) {
+                userId = decoded.id;
+            }
         }
 
         // Parse request body
@@ -71,14 +69,21 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        // Create feedback
-        const feedback = await Feedback.create({
-            userId: decoded.id,
+        // Create feedback (with userId if authenticated, IP if not)
+        const feedbackData: any = {
             type,
             message: message.trim(),
             category: category?.trim() || undefined,
             status: "pending",
-        });
+        };
+
+        if (userId) {
+            feedbackData.userId = userId;
+        } else {
+            feedbackData.ipAddress = ip;
+        }
+
+        const feedback = await Feedback.create(feedbackData);
 
         return NextResponse.json(
             {

@@ -1,7 +1,8 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 export interface IFeedback extends Document {
-    userId: mongoose.Types.ObjectId;
+    userId?: mongoose.Types.ObjectId;
+    ipAddress?: string;
     type: "feature" | "improvement" | "name_suggestion";
     message: string;
     category?: string;
@@ -14,7 +15,11 @@ const FeedbackSchema = new Schema<IFeedback>(
         userId: {
             type: Schema.Types.ObjectId,
             ref: "User",
-            required: true,
+            required: false,
+        },
+        ipAddress: {
+            type: String,
+            required: false,
         },
         type: {
             type: String,
@@ -45,6 +50,7 @@ const FeedbackSchema = new Schema<IFeedback>(
 // Index for faster queries
 FeedbackSchema.index({ userId: 1, createdAt: -1 });
 FeedbackSchema.index({ status: 1 });
+FeedbackSchema.index({ ipAddress: 1 });
 
 export default mongoose.models.Feedback ||
     mongoose.model<IFeedback>("Feedback", FeedbackSchema);

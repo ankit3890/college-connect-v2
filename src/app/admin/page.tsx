@@ -58,6 +58,22 @@ export default function AdminPage() {
             <p className="text-sm text-slate-600 dark:text-slate-400">View system activity and logs</p>
           </Link>
 
+          {/* Feedback Management */}
+          <Link
+            href="/admin/feedback"
+            className="group bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all border-2 border-black dark:border-slate-700 hover:border-blue-500 dark:hover:border-blue-400"
+          >
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/20 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                <svg className="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                </svg>
+              </div>
+              <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Feedback</h2>
+            </div>
+            <p className="text-sm text-slate-600 dark:text-slate-400">View and manage user feedback</p>
+          </Link>
+
           {/* Settings */}
           <Link
             href="/admin/settings"
