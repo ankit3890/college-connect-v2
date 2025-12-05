@@ -77,7 +77,7 @@ export default function WeeklyTimetable({ scheduleData }: WeeklyTimetableProps) 
 
     if (scheduleData.length === 0) {
         return (
-            <div className="text-center py-10 text-slate-500">
+            <div className="text-center py-10 text-slate-500 dark:text-slate-400">
                 No schedule data available for this week.
             </div>
         );
@@ -85,14 +85,14 @@ export default function WeeklyTimetable({ scheduleData }: WeeklyTimetableProps) 
 
     return (
         <div className="overflow-x-auto">
-            <table className="min-w-full border-collapse border border-slate-200">
+            <table className="min-w-full border-collapse border border-slate-200 dark:border-slate-700">
                 <thead>
                     <tr>
-                        <th className="p-3 border border-slate-200 bg-slate-50 text-left text-xs font-bold text-slate-500 uppercase tracking-wider sticky left-0 z-10 w-24">
+                        <th className="p-3 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-700 text-left text-xs font-bold text-slate-500 dark:text-slate-300 uppercase tracking-wider sticky left-0 z-10 w-24">
                             Time
                         </th>
                         {DAYS.map(day => (
-                            <th key={day} className="p-3 border border-slate-200 bg-slate-50 text-center text-xs font-bold text-slate-700 uppercase tracking-wider min-w-[160px]">
+                            <th key={day} className="p-3 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-700 text-center text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider min-w-[160px]">
                                 {day}
                             </th>
                         ))}
@@ -101,18 +101,18 @@ export default function WeeklyTimetable({ scheduleData }: WeeklyTimetableProps) 
                 <tbody>
                     {timeSlots.map(slot => (
                         <tr key={slot}>
-                            <td className="p-3 border border-slate-200 bg-slate-50 text-xs font-semibold text-slate-600 sticky left-0 z-10 whitespace-nowrap">
+                            <td className="p-3 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-700 text-xs font-semibold text-slate-600 dark:text-slate-300 sticky left-0 z-10 whitespace-nowrap">
                                 {slot}
                             </td>
                             {DAYS.map(day => {
                                 const items = grid[day]?.[slot] || [];
                                 return (
-                                    <td key={`${day}-${slot}`} className="p-2 border border-slate-200 align-top h-24">
+                                    <td key={`${day}-${slot}`} className="p-2 border border-slate-200 dark:border-slate-700 align-top h-24 bg-white dark:bg-slate-800">
                                         {items.map((item, idx) => (
-                                            <div key={idx} className="bg-blue-50 text-blue-900 p-2 rounded mb-1 border border-blue-100 text-xs">
+                                            <div key={idx} className="bg-blue-50 dark:bg-blue-900/30 text-blue-900 dark:text-blue-300 p-2 rounded mb-1 border border-blue-100 dark:border-blue-800 text-xs">
                                                 <div className="font-bold">{item.courseCode}</div>
                                                 <div className="truncate" title={item.courseName}>{item.courseName}</div>
-                                                {item.roomName && <div className="mt-1 text-[10px] text-blue-700 font-medium">📍 {item.roomName}</div>}
+                                                {item.roomName && <div className="mt-1 text-[10px] text-blue-700 dark:text-blue-400 font-medium">📍 {item.roomName}</div>}
                                             </div>
                                         ))}
                                     </td>

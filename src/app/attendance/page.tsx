@@ -925,29 +925,29 @@ export default function AttendancePage() {
             {/* Daywise page - merged calendar and table in single scrollable view */}
             {daywiseOpen && daywiseCourse && (
               <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-                <div className="max-w-6xl w-full h-5/6 bg-white rounded-2xl shadow-lg p-4 sm:p-5 flex flex-col">
+                <div className="max-w-6xl w-full h-5/6 bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-4 sm:p-5 flex flex-col">
                   <div className="flex items-center justify-between mb-3 flex-shrink-0">
-                    <h3 className="text-sm sm:text-base font-semibold text-slate-900">
+                    <h3 className="text-sm sm:text-base font-semibold text-slate-900 dark:text-white">
                       Daywise Attendance for{" "}
                       <span className="font-bold">
                         {daywiseCourse.courseName}
                       </span>{" "}
                       -{" "}
-                      <span className="text-slate-600">
+                      <span className="text-slate-600 dark:text-slate-400">
                         {daywiseCourse.componentName}
                       </span>
                     </h3>
                     <button
                       onClick={handleCloseDaywise}
-                      className="text-danger font-bold text-lg leading-none"
+                      className="text-danger dark:text-red-400 font-bold text-lg leading-none hover:text-red-700 dark:hover:text-red-300"
                     >
                       ✕
                     </button>
                   </div>
 
-                  <div className="flex-1 overflow-y-auto min-h-0 border rounded-lg p-2">
+                  <div className="flex-1 overflow-y-auto min-h-0 border dark:border-slate-700 rounded-lg p-2">
                     {daywiseLoading ? (
-                      <div className="p-4 text-center text-sm text-slate-500">
+                      <div className="p-4 text-center text-sm text-slate-500 dark:text-slate-400">
                         Loading daywise data...
                       </div>
                     ) : daywiseError ? (
@@ -958,9 +958,9 @@ export default function AttendancePage() {
                       <div className="space-y-6">
                         {/* 1. Past Attendance Table */}
                         <div>
-                          <h4 className="text-sm font-bold text-slate-800 mb-2 px-1">Past Attendance</h4>
+                          <h4 className="text-sm font-bold text-slate-800 dark:text-white mb-2 px-1">Past Attendance</h4>
                           {daywiseEntries.length === 0 ? (
-                            <p className="text-xs text-slate-500 px-1">No past attendance records found.</p>
+                            <p className="text-xs text-slate-500 dark:text-slate-400 px-1">No past attendance records found.</p>
                           ) : (
                             <>
                               <DaywiseCalendarGrid entries={daywiseEntries} />
@@ -978,9 +978,9 @@ export default function AttendancePage() {
             {/* Schedule Modal */}
             {scheduleOpen && scheduleCourse && (
               <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-                <div className="max-w-6xl w-full h-5/6 bg-white rounded-2xl shadow-lg p-4 sm:p-5 flex flex-col">
+                <div className="max-w-6xl w-full h-5/6 bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-4 sm:p-5 flex flex-col">
                   <div className="flex items-center justify-between mb-3 flex-shrink-0">
-                    <h3 className="text-sm sm:text-base font-semibold text-slate-900">
+                    <h3 className="text-sm sm:text-base font-semibold text-slate-900 dark:text-white">
                       Upcoming Schedule for{" "}
                       <span className="font-bold">
                         {scheduleCourse.courseName}
@@ -988,15 +988,15 @@ export default function AttendancePage() {
                     </h3>
                     <button
                       onClick={handleCloseSchedule}
-                      className="text-danger font-bold text-lg leading-none"
+                      className="text-danger dark:text-red-400 font-bold text-lg leading-none hover:text-red-700 dark:hover:text-red-300"
                     >
                       ✕
                     </button>
                   </div>
 
-                  <div className="flex-1 overflow-y-auto min-h-0 border rounded-lg p-2">
+                  <div className="flex-1 overflow-y-auto min-h-0 border dark:border-slate-700 rounded-lg p-2">
                     {scheduleLoading ? (
-                      <div className="p-4 text-center text-sm text-slate-500">
+                      <div className="p-4 text-center text-sm text-slate-500 dark:text-slate-400">
                         Loading schedule...
                       </div>
                     ) : scheduleError ? (
@@ -1065,32 +1065,32 @@ export default function AttendancePage() {
             {/* Projection Modal */}
             {projectionOpen && (
               <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-                <div className="max-w-3xl w-full max-h-[90vh] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden">
+                <div className="max-w-3xl w-full max-h-[90vh] bg-white dark:bg-slate-800 rounded-2xl shadow-2xl flex flex-col overflow-hidden">
                   {/* Header */}
-                  <div className="p-5 border-b bg-slate-50 flex items-center justify-between flex-shrink-0">
+                  <div className="p-5 border-b dark:border-slate-700 bg-slate-50 dark:bg-slate-700 flex items-center justify-between flex-shrink-0">
                     <div>
-                      <h3 className="text-lg font-bold text-slate-900">
+                      <h3 className="text-lg font-bold text-slate-900 dark:text-white">
                         Attendance Projection
                       </h3>
-                      <p className="text-xs text-slate-500 mt-1">
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                         Simulate how missing future classes affects your attendance.
                       </p>
                     </div>
                     <button
                       onClick={handleCloseProjection}
-                      className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-200 text-slate-600 hover:bg-red-100 hover:text-red-600 transition-colors font-bold"
+                      className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-200 dark:bg-slate-600 text-slate-600 dark:text-slate-300 hover:bg-red-100 dark:hover:bg-red-900 hover:text-red-600 dark:hover:text-red-300 transition-colors font-bold"
                     >
                       ✕
                     </button>
                   </div>
 
                   {/* Controls */}
-                  <div className="p-5 border-b bg-white flex-shrink-0 space-y-4">
+                  <div className="p-5 border-b dark:border-slate-700 bg-white dark:bg-slate-800 flex-shrink-0 space-y-4">
                     <div className="flex items-center justify-between">
-                      <label className="text-sm font-semibold text-slate-700">
+                      <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
                         Target Attendance Goal
                       </label>
-                      <span className="text-2xl font-bold text-slate-900">
+                      <span className="text-2xl font-bold text-slate-900 dark:text-white">
                         {projectionTarget}%
                       </span>
                     </div>

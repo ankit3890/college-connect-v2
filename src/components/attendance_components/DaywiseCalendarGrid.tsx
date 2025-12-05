@@ -106,25 +106,25 @@ export default function DaywiseCalendarGrid({
 	const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
 	return (
-		<div className="border rounded-lg bg-slate-50 p-3">
+		<div className="border dark:border-slate-700 rounded-lg bg-slate-50 dark:bg-slate-800 p-3">
 			<div className="flex items-center justify-between mb-3">
 				<div className="flex items-center gap-2">
-					<button onClick={prevMonth} className="px-2 py-1 rounded border text-sm hover:bg-white">◀</button>
-					<div className="text-sm font-medium min-w-[140px] text-center">{monthNames[month]} {year}</div>
-					<button onClick={nextMonth} className="px-2 py-1 rounded border text-sm hover:bg-white">▶</button>
+					<button onClick={prevMonth} className="px-2 py-1 rounded border dark:border-slate-600 text-sm hover:bg-white dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300">◀</button>
+					<div className="text-sm font-medium min-w-[140px] text-center text-slate-900 dark:text-white">{monthNames[month]} {year}</div>
+					<button onClick={nextMonth} className="px-2 py-1 rounded border dark:border-slate-600 text-sm hover:bg-white dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300">▶</button>
 				</div>
 			</div>
 
 			<div className="overflow-y-auto max-h-[300px]">
-				<div className="grid grid-cols-7 gap-0.5 text-[10px] mb-1 sticky top-0 bg-slate-50">
+				<div className="grid grid-cols-7 gap-0.5 text-[10px] mb-1 sticky top-0 bg-slate-50 dark:bg-slate-800">
 					{['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((d) => (
-						<div key={d} className="text-slate-500 text-center font-medium text-[9px]">{d}</div>
+						<div key={d} className="text-slate-500 dark:text-slate-400 text-center font-medium text-[9px]">{d}</div>
 					))}
 				</div>
 
 				<div className="grid grid-cols-7 gap-0.5">
 					{Array.from({ length: firstDay }).map((_, i) => (
-						<div key={`empty-${i}`} className="min-h-[50px] p-0.5 border bg-slate-100" />
+						<div key={`empty-${i}`} className="min-h-[50px] p-0.5 border dark:border-slate-700 bg-slate-100 dark:bg-slate-700" />
 					))}
 
 					{Array.from({ length: daysInMonth }).map((_, idx) => {
@@ -132,11 +132,11 @@ export default function DaywiseCalendarGrid({
 						const k = dateKey(d);
 						const dayEntries = mapByDate[k] || [];
 						return (
-							<div key={k} className="min-h-[50px] p-0.5 border bg-white">
-								<div className="text-xs font-medium mb-0.5">{d}</div>
+							<div key={k} className="min-h-[50px] p-0.5 border dark:border-slate-700 bg-white dark:bg-slate-800">
+								<div className="text-xs font-medium mb-0.5 text-slate-900 dark:text-white">{d}</div>
 								<div className="space-y-0.5 text-[9px]">
 									{dayEntries.length === 0 ? (
-										<div className="text-slate-400 text-[7px]">No classes</div>
+										<div className="text-slate-400 dark:text-slate-500 text-[7px]">No classes</div>
 									) : (
 										dayEntries.map((e, i2: number) => {
 											const status = (e.status ?? "").toString().toUpperCase();
@@ -145,17 +145,21 @@ export default function DaywiseCalendarGrid({
 											const isUpcoming = e.isUpcoming;
 
 											let entryBgClass = 'bg-slate-50';
+											let textColorClass = 'text-slate-900 dark:text-white';
 											if (isUpcoming) {
 												entryBgClass = 'bg-blue-50 border-l-4 border-blue-400';
+												textColorClass = '!text-black';
 											} else if (isPresent) {
 												entryBgClass = 'bg-accent-100 border-l-4 border-accent';
+												textColorClass = '!text-black';
 											} else if (isAbsent) {
 												entryBgClass = 'bg-danger-100 border-l-4 border-danger';
+												textColorClass = '!text-black';
 											}
 
 											return (
 												<div key={i2} className={`p-1 rounded ${entryBgClass}`} title={e.timeSlot ?? ''}>
-													<div className="text-[7px] font-semibold leading-tight break-words max-w-[8rem] md:max-w-sm">{e.timeSlot ?? 'Class'}</div>
+													<div className={`text-[7px] font-semibold leading-tight break-words max-w-[8rem] md:max-w-sm ${textColorClass}`}>{e.timeSlot ?? 'Class'}</div>
 													<div className={`text-[6px] ${isUpcoming ? 'text-blue-600' : isPresent ? 'text-accent' : isAbsent ? 'text-danger' : 'text-slate-500'}`}>
 														{isUpcoming ? 'Scheduled' : isPresent ? 'Present' : isAbsent ? 'Absent' : (e.status ?? '')}
 													</div>

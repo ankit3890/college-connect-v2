@@ -141,7 +141,7 @@ export default function AttendanceGraph({ courses, onOpenDaywise }: AttendanceGr
 
   if (courses.length === 0) {
     return (
-      <div className="p-4 text-center text-slate-500">
+      <div className="p-4 text-center text-slate-500 dark:text-slate-400">
         No courses available to display graphs
       </div>
     );
@@ -150,8 +150,8 @@ export default function AttendanceGraph({ courses, onOpenDaywise }: AttendanceGr
   return (
     <div className="space-y-6">
       {/* Overall Attendance Summary */}
-      <div className="bg-white border rounded-lg p-4 print:break-inside-avoid">
-        <h3 className="text-sm font-semibold mb-4">Overall Attendance Summary</h3>
+      <div className="bg-white dark:bg-slate-800 border dark:border-slate-700 rounded-lg p-4 print:break-inside-avoid">
+        <h3 className="text-sm font-semibold mb-4 text-slate-900 dark:text-white">Overall Attendance Summary</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="max-w-xs mx-auto print:hidden">
             {/* Doughnut: disable legend click (so users can't hide Present/Absent) and use chartOptions */}
@@ -181,7 +181,7 @@ export default function AttendanceGraph({ courses, onOpenDaywise }: AttendanceGr
 
               return (
                 <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
+                  <div className="flex justify-between text-slate-700 dark:text-slate-300">
                     <span className="font-semibold">Total Classes:</span>
                     <span>{total}</span>
                   </div>
@@ -193,7 +193,7 @@ export default function AttendanceGraph({ courses, onOpenDaywise }: AttendanceGr
                     <span className="font-semibold">Absent:</span>
                     <span>{totalAbsent}</span>
                   </div>
-                  <div className="flex justify-between font-bold text-base pt-2 border-t">
+                  <div className="flex justify-between font-bold text-base pt-2 border-t dark:border-slate-700 text-slate-900 dark:text-white">
                     <span>Overall %:</span>
                     <span className={overallPercent >= 75 ? "text-emerald-600" : "text-red-600"}>{overallPercent}%</span>
                   </div>
@@ -205,8 +205,8 @@ export default function AttendanceGraph({ courses, onOpenDaywise }: AttendanceGr
       </div>
 
       {/* Bar Chart - Present vs Absent */}
-      <div className="bg-white border rounded-lg p-4 print:break-inside-avoid">
-        <h3 className="text-sm font-semibold mb-4">Present vs Absent by Course</h3>
+      <div className="bg-white dark:bg-slate-800 border dark:border-slate-700 rounded-lg p-4 print:break-inside-avoid">
+        <h3 className="text-sm font-semibold mb-4 text-slate-900 dark:text-white">Present vs Absent by Course</h3>
         <div className="max-h-96 cursor-pointer" style={{ height: 420 }}>
           <Bar
             data={barChartData}
@@ -229,8 +229,8 @@ export default function AttendanceGraph({ courses, onOpenDaywise }: AttendanceGr
       </div>
 
       {/* Line Chart - Attendance Percentage */}
-      <div className="bg-white border rounded-lg p-4 print:break-inside-avoid">
-        <h3 className="text-sm font-semibold mb-4">Attendance Percentage by Course</h3>
+      <div className="bg-white dark:bg-slate-800 border dark:border-slate-700 rounded-lg p-4 print:break-inside-avoid">
+        <h3 className="text-sm font-semibold mb-4 text-slate-900 dark:text-white">Attendance Percentage by Course</h3>
         <div className="max-h-96">
           <div style={{ height: 320 }} className={onOpenDaywise ? "cursor-pointer" : ""}>
             <Line
@@ -253,28 +253,28 @@ export default function AttendanceGraph({ courses, onOpenDaywise }: AttendanceGr
       </div>
 
       {/* Course Comparison Table */}
-      <div className="bg-white border rounded-lg p-4">
-        <h3 className="text-sm font-semibold mb-4">Course-wise Comparison</h3>
+      <div className="bg-white dark:bg-slate-800 border dark:border-slate-700 rounded-lg p-4">
+        <h3 className="text-sm font-semibold mb-4 text-slate-900 dark:text-white">Course-wise Comparison</h3>
         <div className="overflow-x-auto">
           <table className="min-w-full text-xs sm:text-sm">
-            <thead className="bg-slate-50">
+            <thead className="bg-slate-50 dark:bg-slate-700">
               <tr>
-                <th className="px-3 py-2 text-left font-semibold">Course</th>
-                <th className="px-3 py-2 text-right font-semibold">Present</th>
-                <th className="px-3 py-2 text-right font-semibold">Absent</th>
-                <th className="px-3 py-2 text-right font-semibold">Total</th>
-                <th className="px-3 py-2 text-right font-semibold">%</th>
+                <th className="px-3 py-2 text-left font-semibold text-slate-700 dark:text-slate-300">Course</th>
+                <th className="px-3 py-2 text-right font-semibold text-slate-700 dark:text-slate-300">Present</th>
+                <th className="px-3 py-2 text-right font-semibold text-slate-700 dark:text-slate-300">Absent</th>
+                <th className="px-3 py-2 text-right font-semibold text-slate-700 dark:text-slate-300">Total</th>
+                <th className="px-3 py-2 text-right font-semibold text-slate-700 dark:text-slate-300">%</th>
               </tr>
             </thead>
             <tbody>
               {courses.map((course, idx) => {
                 const absent = Math.max(course.totalClasses - course.presentClasses, 0);
                 return (
-                  <tr key={idx} className="border-t hover:bg-slate-50">
-                    <td className="px-3 py-2 font-medium">{course.courseName}</td>
+                  <tr key={idx} className="border-t dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700">
+                    <td className="px-3 py-2 font-medium text-slate-900 dark:text-white">{course.courseName}</td>
                     <td className="px-3 py-2 text-right text-emerald-600 font-semibold">{course.presentClasses}</td>
                     <td className="px-3 py-2 text-right text-red-600 font-semibold">{absent}</td>
-                    <td className="px-3 py-2 text-right">{course.totalClasses}</td>
+                    <td className="px-3 py-2 text-right text-slate-700 dark:text-slate-300">{course.totalClasses}</td>
                     <td className={`px-3 py-2 text-right font-semibold ${course.percentage >= 75 ? "text-emerald-600" : "text-red-600"}`}>
                       {course.percentage.toFixed(1)}%
                     </td>
