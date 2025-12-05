@@ -335,7 +335,7 @@ export default function ProfilePage() {
     }
 
     return (
-        <div className="min-h-screen bg-slate-100">
+        <div className="min-h-screen bg-slate-100 dark:bg-slate-900 transition-colors duration-300">
             <Navbar />
 
             <main className="max-w-4xl mx-auto px-4 py-8 space-y-6">
@@ -348,8 +348,8 @@ export default function ProfilePage() {
                             </svg>
                         </div>
                     </div>
-                    <h1 className="text-3xl font-bold text-slate-900 mb-2">Profile</h1>
-                    <p className="text-slate-600 mb-4">
+                    <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">Profile</h1>
+                    <p className="text-slate-600 dark:text-slate-400 mb-4">
                         Manage your CollegeConnect account and sync with CyberVidya.
                     </p>
                     {user?.username && (
@@ -367,7 +367,7 @@ export default function ProfilePage() {
                 )}
 
                 {/* TOP CARD: avatar + quick info */}
-                <section className="rounded-xl border-2 border-black bg-white px-4 py-4 shadow-lg">
+                <section className="rounded-xl border-2 border-black dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-4 shadow-lg">
                     <div className="flex flex-col sm:flex-row gap-4 sm:items-center">
                         {/* avatar */}
                         <div className="flex items-center gap-3">
@@ -387,7 +387,7 @@ export default function ProfilePage() {
                         {/* main info */}
                         <div className="flex-1 min-w-0 space-y-1">
                             <div className="flex flex-wrap items-center gap-2">
-                                <p className="text-lg font-semibold text-slate-900">
+                                <p className="text-lg font-semibold text-slate-900 dark:text-white">
                                     {displayName}
                                 </p>
                                 {roleBadgeLabel && (
@@ -395,22 +395,22 @@ export default function ProfilePage() {
                                 )}
                             </div>
 
-                            <div className="flex flex-wrap gap-2 text-xs text-slate-600">
-                                <span className="rounded-full bg-slate-100 px-2 py-[2px]">
+                            <div className="flex flex-wrap gap-2 text-xs text-slate-600 dark:text-slate-400">
+                                <span className="rounded-full bg-slate-100 dark:bg-slate-700 px-2 py-[2px]">
                                     ID: <span className="font-mono">{user.studentId}</span>
                                 </span>
                                 {user.branch && (
-                                    <span className="rounded-full bg-slate-100 px-2 py-[2px]">
+                                    <span className="rounded-full bg-slate-100 dark:bg-slate-700 px-2 py-[2px]">
                                         {user.branch}
                                     </span>
                                 )}
                                 {user.year != null && (
-                                    <span className="rounded-full bg-slate-100 px-2 py-[2px]">
+                                    <span className="rounded-full bg-slate-100 dark:bg-slate-700 px-2 py-[2px]">
                                         Year {user.year}
                                     </span>
                                 )}
                                 {user.gender && (
-                                    <span className="rounded-full bg-slate-100 px-2 py-[2px]">
+                                    <span className="rounded-full bg-slate-100 dark:bg-slate-700 px-2 py-[2px]">
                                         {user.gender}
                                     </span>
                                 )}
@@ -422,7 +422,7 @@ export default function ProfilePage() {
                             {!editMode ? (
                                 <button
                                     onClick={() => setEditMode(true)}
-                                    className="rounded-md bg-slate-900 px-3 py-1.5 text-xs sm:text-sm font-semibold text-white hover:bg-slate-800"
+                                    className="rounded-md bg-slate-900 dark:bg-black px-3 py-1.5 text-xs sm:text-sm font-semibold text-white hover:bg-slate-800 dark:hover:bg-slate-900"
                                 >
                                     Edit Profile
                                 </button>
@@ -430,7 +430,7 @@ export default function ProfilePage() {
                                 <button
                                     type="button"
                                     onClick={handleEditCancel}
-                                    className="rounded-md border border-slate-300 px-3 py-1.5 text-xs sm:text-sm font-semibold text-slate-700 hover:bg-slate-50"
+                                    className="rounded-md border border-slate-300 dark:border-slate-600 px-3 py-1.5 text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
                                 >
                                     Cancel
                                 </button>
@@ -480,123 +480,68 @@ export default function ProfilePage() {
                 </section>
 
                 {/* DETAILS + EDITABLE FIELDS */}
-                <section className="rounded-xl border-2 border-black bg-white px-4 py-4 shadow-lg">
-                    <h2 className="text-sm font-semibold text-slate-900 mb-3">
+                <section className="rounded-xl border-2 border-black dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-4 shadow-lg">
+                    <h2 className="text-sm font-semibold text-slate-900 dark:text-white mb-3">
                         Account details
                     </h2>
 
                     <form
                         onSubmit={handleProfileSave}
-                        className="space-y-3 text-sm text-slate-800"
+                        className="space-y-3 text-sm text-slate-800 dark:text-slate-200"
                     >
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div>
-                                <p className="text-xs text-slate-500">Name</p>
+                                <p className="text-xs text-slate-500 dark:text-slate-400">Name</p>
                                 <p>{displayName}</p>
                             </div>
                             <div>
-                                <p className="text-xs text-slate-500">Cybervidya ID</p>
+                                <p className="text-xs text-slate-500 dark:text-slate-400">Cybervidya ID</p>
                                 <p className="font-mono">{user.studentId}</p>
                             </div>
 
                             <div>
-                                <p className="text-xs text-slate-500">Username</p>
+                                <p className="text-xs text-slate-500 dark:text-slate-400">Username</p>
                                 <p>{user.username ? `@${user.username}` : "Not set"}</p>
                             </div>
-                            <div>
-                                <p className="text-xs text-slate-500">Role</p>
-                                <p>{roleBadgeLabel}</p>
-                            </div>
+                            <label className="text-xs font-medium text-slate-600 dark:text-slate-400">
+                                CyberVidya ID
+                            </label>
+                            <input
+                                className="mt-1 border rounded-md px-2 py-1 w-full text-sm bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white"
+                                value={cyberId}
+                                onChange={(e) => setCyberId(e.target.value)}
+                                placeholder="e.g. 202412345678901"
+                            />
                         </div>
 
-                        <div className="h-px bg-slate-200 my-1" />
-
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <div>
-                                <p className="text-xs text-slate-500 mb-1">Email</p>
-                                {editMode ? (
-                                    <input
-                                        className="w-full border rounded-md px-2 py-1 text-sm"
-                                        value={emailInput}
-                                        onChange={(e) => setEmailInput(e.target.value)}
-                                        type="email"
-                                        placeholder="your@email.com"
-                                        required
-                                    />
-                                ) : (
-                                    <p>{hideContacts ? "Hidden" : user.email}</p>
-                                )}
-                            </div>
-                            <div>
-                                <p className="text-xs text-slate-500 mb-1">Mobile</p>
-                                {editMode ? (
-                                    <input
-                                        className="w-full border rounded-md px-2 py-1 text-sm"
-                                        value={mobileInput}
-                                        onChange={(e) => setMobileInput(e.target.value)}
-                                        placeholder="10-digit mobile number"
-                                    />
-                                ) : (
-                                    <p>
-                                        {hideContacts
-                                            ? "Hidden"
-                                            : user.mobileNumber || "Not set"}
-                                    </p>
-                                )}
-                            </div>
+                        <div>
+                            <label className="text-xs font-medium text-slate-600 dark:text-slate-400">
+                                CyberVidya Password
+                            </label>
+                            <input
+                                className="mt-1 border rounded-md px-2 py-1 w-full text-sm bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white"
+                                type="password"
+                                value={cyberPass}
+                                onChange={(e) => setCyberPass(e.target.value)}
+                                placeholder="Your CyberVidya password"
+                            />
                         </div>
 
-                        {/* NEW: single checkbox to hide both email & mobile */}
-                        {editMode && (
-                            <div className="flex items-center gap-2 text-xs text-slate-700">
-                                <input
-                                    id="hideContacts"
-                                    type="checkbox"
-                                    checked={hideContacts}
-                                    onChange={(e) => setHideContacts(e.target.checked)}
-                                    className="h-3 w-3"
-                                />
-                                <label htmlFor="hideContacts">
-                                    Hide email & mobile from other users
-                                </label>
-                            </div>
-                        )}
-
-                        <div className="h-px bg-slate-200 my-1" />
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                            <div>
-                                <p className="text-xs text-slate-500">Gender</p>
-                                <p>{user.gender || "Not set"}</p>
-                            </div>
-                            <div>
-                                <p className="text-xs text-slate-500">Branch</p>
-                                <p>{user.branch || "Not set"}</p>
-                            </div>
-                            <div>
-                                <p className="text-xs text-slate-500">Year</p>
-                                <p>{user.year ?? "Not set"}</p>
-                            </div>
-                        </div>
-
-                        {editMode && (
-                            <div className="pt-2 flex justify-end">
-                                <button
-                                    type="submit"
-                                    className="rounded-md bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700"
-                                >
-                                    Save changes
-                                </button>
-                            </div>
-                        )}
+                        <button
+                            type="submit"
+                            className="mt-2 rounded-md bg-emerald-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-60 hover:bg-emerald-700"
+                            disabled={syncLoading}
+                        >
+                            {syncLoading ? "Re-syncing…" : "Sync Now"}
+                        </button>
                     </form>
-
                     {/* Username setup (only if not set yet) */}
                     {!user.username && (
-                        <div className="mt-4 border-t pt-3">
-                            <h3 className="text-sm font-semibold mb-1">
+                        <div className="mt-4 border-t border-slate-200 dark:border-slate-700 pt-3">
+                            <h3 className="text-sm font-semibold mb-1 text-slate-900 dark:text-white">
                                 Set your unique username (for chat)
                             </h3>
-                            <p className="text-xs text-slate-500 mb-2">
+                            <p className="text-xs text-slate-500 dark:text-slate-400 mb-2">
                                 You can set this only once. Use 3–20 characters: lowercase
                                 letters, numbers, "." or "_".
                             </p>
@@ -605,7 +550,7 @@ export default function ProfilePage() {
                                 className="flex flex-col sm:flex-row gap-2 max-w-sm"
                             >
                                 <input
-                                    className="border rounded-md px-2 py-1 text-sm flex-1"
+                                    className="border rounded-md px-2 py-1 text-sm flex-1 bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white"
                                     value={usernameInput}
                                     onChange={(e) =>
                                         setUsernameInput(e.target.value.toLowerCase())
@@ -627,7 +572,7 @@ export default function ProfilePage() {
                 {/* Synced + Re-sync */}
                 {user.hasSyncedFromCyberVidya && (
                     <>
-                        <section className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 flex items-center justify-between text-sm text-emerald-800">
+                        <section className="rounded-xl border border-emerald-200 bg-emerald-50 dark:bg-emerald-900/20 dark:border-emerald-800 px-4 py-3 flex items-center justify-between text-sm text-emerald-800 dark:text-emerald-200">
                             <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
                                 <span>Profile is synced with CyberVidya ✅</span>
                                 {user.cyberUserName && (
@@ -651,20 +596,20 @@ export default function ProfilePage() {
                         </section>
 
                         {showReSyncForm && (
-                            <section className="rounded-xl border-2 border-black bg-white px-4 py-4 shadow-lg space-y-3">
-                                <h2 className="text-sm font-semibold">Re-sync from CyberVidya</h2>
-                                <p className="text-xs text-slate-500">
+                            <section className="rounded-xl border-2 border-black dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-4 shadow-lg space-y-3">
+                                <h2 className="text-sm font-semibold text-slate-900 dark:text-white">Re-sync from CyberVidya</h2>
+                                <p className="text-xs text-slate-500 dark:text-slate-400">
                                     Enter your CyberVidya ID and password again to pull the latest
                                     official details.
                                 </p>
 
                                 <form onSubmit={handleSync} className="space-y-2 max-w-md">
                                     <div>
-                                        <label className="text-xs font-medium text-slate-600">
+                                        <label className="text-xs font-medium text-slate-600 dark:text-slate-400">
                                             CyberVidya ID
                                         </label>
                                         <input
-                                            className="mt-1 border rounded-md px-2 py-1 w-full text-sm"
+                                            className="mt-1 border rounded-md px-2 py-1 w-full text-sm bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white"
                                             value={cyberId}
                                             onChange={(e) => setCyberId(e.target.value)}
                                             placeholder="e.g. 202412345678901"
@@ -672,11 +617,11 @@ export default function ProfilePage() {
                                     </div>
 
                                     <div>
-                                        <label className="text-xs font-medium text-slate-600">
+                                        <label className="text-xs font-medium text-slate-600 dark:text-slate-400">
                                             CyberVidya Password
                                         </label>
                                         <input
-                                            className="mt-1 border rounded-md px-2 py-1 w-full text-sm"
+                                            className="mt-1 border rounded-md px-2 py-1 w-full text-sm bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white"
                                             type="password"
                                             value={cyberPass}
                                             onChange={(e) => setCyberPass(e.target.value)}
@@ -699,12 +644,12 @@ export default function ProfilePage() {
 
                 {/* First-time sync */}
                 {!user.hasSyncedFromCyberVidya && (
-                    <section className="rounded-xl border-2 border-black bg-white px-4 py-4 shadow-lg space-y-3">
-                        <h2 className="text-sm sm:text-lg font-semibold">
+                    <section className="rounded-xl border-2 border-black dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-4 shadow-lg space-y-3">
+                        <h2 className="text-sm sm:text-lg font-semibold text-slate-900 dark:text-white">
                             Sync from CyberVidya
                         </h2>
 
-                        <p className="text-xs text-slate-500">
+                        <p className="text-xs text-slate-500 dark:text-slate-400">
                             Enter your CyberVidya username and password to pull your official
                             details (name, branch, year, etc.). Credentials are used once and
                             then discarded.
@@ -712,11 +657,11 @@ export default function ProfilePage() {
 
                         <form onSubmit={handleSync} className="space-y-2 max-w-md">
                             <div>
-                                <label className="text-xs font-medium text-slate-600">
+                                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">
                                     CyberVidya ID
                                 </label>
                                 <input
-                                    className="mt-1 border rounded-md px-2 py-1 w-full text-sm"
+                                    className="mt-1 border rounded-md px-2 py-1 w-full text-sm bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white"
                                     value={cyberId}
                                     onChange={(e) => setCyberId(e.target.value)}
                                     placeholder="e.g. 202412345678901"
@@ -724,11 +669,11 @@ export default function ProfilePage() {
                             </div>
 
                             <div>
-                                <label className="text-xs font-medium text-slate-600">
+                                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">
                                     CyberVidya Password
                                 </label>
                                 <input
-                                    className="mt-1 border rounded-md px-2 py-1 w-full text-sm"
+                                    className="mt-1 border rounded-md px-2 py-1 w-full text-sm bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white"
                                     type="password"
                                     value={cyberPass}
                                     onChange={(e) => setCyberPass(e.target.value)}
@@ -751,7 +696,7 @@ export default function ProfilePage() {
                 <div className="pt-2 flex flex-col sm:flex-row justify-center gap-2">
                     <button
                         onClick={handleChangePassword}
-                        className="rounded-md border border-slate-300 bg-white px-6 py-2 text-sm font-semibold text-slate-800 hover:bg-slate-50"
+                        className="rounded-md border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-6 py-2 text-sm font-semibold text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700"
                     >
                         Change Password
                     </button>
@@ -763,6 +708,6 @@ export default function ProfilePage() {
                     </button>
                 </div>
             </main>
-        </div>
+        </div >
     );
 }

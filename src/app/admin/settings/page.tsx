@@ -61,7 +61,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-100">
+    <div className="min-h-screen bg-slate-100 dark:bg-slate-900 transition-colors duration-300">
       <Navbar />
 
       <main className="max-w-4xl mx-auto px-4 py-6">
@@ -75,28 +75,28 @@ export default function SettingsPage() {
               </svg>
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">Settings</h1>
-          <p className="text-slate-600">
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">Settings</h1>
+          <p className="text-slate-600 dark:text-slate-400">
             Configure system preferences and options
           </p>
         </div>
 
         {loading ? (
           <div className="text-center py-12">
-            <p className="text-slate-500">Loading settings...</p>
+            <p className="text-slate-500 dark:text-slate-400">Loading settings...</p>
           </div>
         ) : (
           <div className="space-y-6">
             {/* System Settings */}
-            <div className="bg-white rounded-2xl shadow-lg p-6 border-2 border-black">
-              <h2 className="text-lg font-semibold text-slate-900 mb-4">System Settings</h2>
+            <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-6 border-2 border-black dark:border-slate-700">
+              <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">System Settings</h2>
 
               <div className="space-y-4">
                 {/* Maintenance Mode */}
-                <div className="flex items-start justify-between py-3 border-b border-slate-200">
+                <div className="flex items-start justify-between py-3 border-b border-slate-200 dark:border-slate-700">
                   <div className="flex-1">
-                    <h3 className="text-sm font-medium text-slate-900">Maintenance Mode</h3>
-                    <p className="text-xs text-slate-600 mt-1">
+                    <h3 className="text-sm font-medium text-slate-900 dark:text-white">Maintenance Mode</h3>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
                       Enable maintenance mode to restrict access
                     </p>
                   </div>
@@ -113,24 +113,24 @@ export default function SettingsPage() {
 
                 {maintenanceMode && (
                   <div className="pl-4">
-                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                       Maintenance Message
                     </label>
                     <input
                       type="text"
                       value={maintenanceMessage}
                       onChange={(e) => setMaintenanceMessage(e.target.value)}
-                      className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-900 text-slate-900 dark:text-white"
                       placeholder="System is under maintenance..."
                     />
                   </div>
                 )}
 
                 {/* Email Notifications */}
-                <div className="flex items-start justify-between py-3 border-b border-slate-200">
+                <div className="flex items-start justify-between py-3 border-b border-slate-200 dark:border-slate-700">
                   <div className="flex-1">
-                    <h3 className="text-sm font-medium text-slate-900">Email Notifications</h3>
-                    <p className="text-xs text-slate-600 mt-1">
+                    <h3 className="text-sm font-medium text-slate-900 dark:text-white">Email Notifications</h3>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
                       Send email notifications for important events
                     </p>
                   </div>
@@ -148,8 +148,8 @@ export default function SettingsPage() {
                 {/* Auto Backup */}
                 <div className="flex items-start justify-between py-3">
                   <div className="flex-1">
-                    <h3 className="text-sm font-medium text-slate-900">Automatic Backups</h3>
-                    <p className="text-xs text-slate-600 mt-1">
+                    <h3 className="text-sm font-medium text-slate-900 dark:text-white">Automatic Backups</h3>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
                       Automatically backup database daily
                     </p>
                   </div>
@@ -169,7 +169,7 @@ export default function SettingsPage() {
                 <button
                   onClick={handleSave}
                   disabled={saving}
-                  className="px-6 py-2 bg-slate-900 text-white rounded-lg font-semibold hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-6 py-2 bg-slate-900 dark:bg-slate-700 text-white rounded-lg font-semibold hover:bg-slate-800 dark:hover:bg-slate-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {saving ? "Saving..." : "Save Changes"}
                 </button>
@@ -177,31 +177,31 @@ export default function SettingsPage() {
             </div>
 
             {/* Database Settings */}
-            <div className="bg-white rounded-2xl shadow-lg p-6 border-2 border-black">
-              <h2 className="text-lg font-semibold text-slate-900 mb-4">Database</h2>
+            <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-6 border-2 border-black dark:border-slate-700">
+              <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Database</h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <button className="flex items-center gap-3 p-4 border-2 border-slate-200 rounded-xl hover:border-blue-500 hover:bg-blue-50 transition-all">
-                  <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                    <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <button className="flex items-center gap-3 p-4 border-2 border-slate-200 dark:border-slate-700 rounded-xl hover:border-blue-500 dark:hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all">
+                  <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
+                    <svg className="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                     </svg>
                   </div>
                   <div className="text-left">
-                    <div className="font-medium text-slate-900">Backup Now</div>
-                    <div className="text-xs text-slate-600">Create manual backup</div>
+                    <div className="font-medium text-slate-900 dark:text-white">Backup Now</div>
+                    <div className="text-xs text-slate-600 dark:text-slate-400">Create manual backup</div>
                   </div>
                 </button>
 
-                <button className="flex items-center gap-3 p-4 border-2 border-slate-200 rounded-xl hover:border-emerald-500 hover:bg-emerald-50 transition-all">
-                  <div className="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center">
-                    <svg className="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <button className="flex items-center gap-3 p-4 border-2 border-slate-200 dark:border-slate-700 rounded-xl hover:border-emerald-500 dark:hover:border-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-all">
+                  <div className="w-10 h-10 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex items-center justify-center">
+                    <svg className="w-5 h-5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                     </svg>
                   </div>
                   <div className="text-left">
-                    <div className="font-medium text-slate-900">Restore</div>
-                    <div className="text-xs text-slate-600">Restore from backup</div>
+                    <div className="font-medium text-slate-900 dark:text-white">Restore</div>
+                    <div className="text-xs text-slate-600 dark:text-slate-400">Restore from backup</div>
                   </div>
                 </button>
               </div>

@@ -3,8 +3,32 @@
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import UserSearch from "@/components/UserSearch";
+import { useEffect, useState } from "react";
+
+interface User {
+  username?: string;
+  name?: string;
+  studentId?: string;
+}
 
 export default function DashboardPage() {
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    async function fetchUser() {
+      try {
+        const res = await fetch("/api/user/me");
+        if (res.ok) {
+          const data = await res.json();
+          setUser(data.user || data);
+        }
+      } catch (err) {
+        console.error("Failed to fetch user:", err);
+      }
+    }
+    fetchUser();
+  }, []);
+
   const logActivity = async (action: string, details: string) => {
     try {
       await fetch("/api/log/activity", {
@@ -18,7 +42,7 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-100">
+    <div className="min-h-screen bg-slate-100 dark:bg-slate-900 transition-colors duration-300">
       <Navbar />
 
       <main className="max-w-4xl mx-auto px-4 py-4">
@@ -31,8 +55,8 @@ export default function DashboardPage() {
               </svg>
             </div>
           </div>
-          <h1 className="text-2xl font-bold text-slate-900 mb-1">Dashboard</h1>
-          <p className="text-sm text-slate-600">
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-1">Dashboard</h1>
+          <p className="text-sm text-slate-600 dark:text-slate-400">
             Welcome to CollegeConnect
           </p>
         </div>
@@ -48,7 +72,7 @@ export default function DashboardPage() {
           <Link
             href="/attendance"
             onClick={() => logActivity("ACCESS_ATTENDANCE", "Accessed Attendance")}
-            className="group bg-white rounded-xl shadow-md p-4 hover:shadow-lg transition-all duration-200 border-2 border-black hover:border-blue-500"
+            className="group bg-white dark:bg-slate-800 rounded-xl shadow-md p-4 hover:shadow-lg transition-all duration-200 border-2 border-black dark:border-slate-700 hover:border-blue-500 dark:hover:border-blue-500"
           >
             <div className="flex items-start gap-3">
               <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
@@ -57,10 +81,10 @@ export default function DashboardPage() {
                 </svg>
               </div>
               <div className="flex-1">
-                <h2 className="text-base font-bold text-slate-900 mb-1 group-hover:text-blue-600 transition-colors">
+                <h2 className="text-base font-bold text-slate-900 dark:text-white mb-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                   Attendance
                 </h2>
-                <p className="text-xs text-slate-500 leading-relaxed">
+                <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
                   View your attendance records
                 </p>
               </div>
@@ -71,7 +95,7 @@ export default function DashboardPage() {
           <Link
             href="/syllabus/search"
             onClick={() => logActivity("ACCESS_SYLLABUS", "Accessed Syllabus")}
-            className="group bg-white rounded-xl shadow-md p-4 hover:shadow-lg transition-all duration-200 border-2 border-black hover:border-emerald-500"
+            className="group bg-white dark:bg-slate-800 rounded-xl shadow-md p-4 hover:shadow-lg transition-all duration-200 border-2 border-black dark:border-slate-700 hover:border-emerald-500 dark:hover:border-emerald-500"
           >
             <div className="flex items-start gap-3">
               <div className="w-10 h-10 bg-emerald-50 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
@@ -80,10 +104,10 @@ export default function DashboardPage() {
                 </svg>
               </div>
               <div className="flex-1">
-                <h2 className="text-base font-bold text-slate-900 mb-1 group-hover:text-emerald-600 transition-colors">
+                <h2 className="text-base font-bold text-slate-900 dark:text-white mb-1 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
                   Syllabus
                 </h2>
-                <p className="text-xs text-slate-500 leading-relaxed">
+                <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
                   Search course syllabi
                 </p>
               </div>
@@ -92,9 +116,9 @@ export default function DashboardPage() {
 
           {/* Profile Card */}
           <Link
-            href="/profile"
+            href={user?.username ? `/u/${user.username}` : "/profile"}
             onClick={() => logActivity("ACCESS_PROFILE", "Accessed Profile")}
-            className="group bg-white rounded-xl shadow-md p-4 hover:shadow-lg transition-all duration-200 border-2 border-black hover:border-purple-500"
+            className="group bg-white dark:bg-slate-800 rounded-xl shadow-md p-4 hover:shadow-lg transition-all duration-200 border-2 border-black dark:border-slate-700 hover:border-purple-500 dark:hover:border-purple-500"
           >
             <div className="flex items-start gap-3">
               <div className="w-10 h-10 bg-purple-50 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
@@ -103,11 +127,11 @@ export default function DashboardPage() {
                 </svg>
               </div>
               <div className="flex-1">
-                <h2 className="text-base font-bold text-slate-900 mb-1 group-hover:text-purple-600 transition-colors">
+                <h2 className="text-base font-bold text-slate-900 dark:text-white mb-1 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
                   Profile
                 </h2>
-                <p className="text-xs text-slate-500 leading-relaxed">
-                  Manage your account
+                <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                  View your public profile
                 </p>
               </div>
             </div>
@@ -117,7 +141,7 @@ export default function DashboardPage() {
           <Link
             href="/settings"
             onClick={() => logActivity("ACCESS_SETTINGS", "Accessed Settings")}
-            className="group bg-white rounded-xl shadow-md p-4 hover:shadow-lg transition-all duration-200 border-2 border-black hover:border-slate-500"
+            className="group bg-white dark:bg-slate-800 rounded-xl shadow-md p-4 hover:shadow-lg transition-all duration-200 border-2 border-black dark:border-slate-700 hover:border-slate-500 dark:hover:border-slate-400"
           >
             <div className="flex items-start gap-3">
               <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
@@ -127,10 +151,10 @@ export default function DashboardPage() {
                 </svg>
               </div>
               <div className="flex-1">
-                <h2 className="text-base font-bold text-slate-900 mb-1 group-hover:text-slate-600 transition-colors">
+                <h2 className="text-base font-bold text-slate-900 dark:text-white mb-1 group-hover:text-slate-600 dark:group-hover:text-slate-300 transition-colors">
                   Settings
                 </h2>
-                <p className="text-xs text-slate-500 leading-relaxed">
+                <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
                   App preferences
                 </p>
               </div>

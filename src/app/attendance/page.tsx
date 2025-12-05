@@ -515,12 +515,12 @@ export default function AttendancePage() {
         : "bg-danger";
 
   return (
-    <div className="min-h-screen bg-slate-100">
+    <div className="min-h-screen bg-slate-100 dark:bg-slate-900 transition-colors duration-300">
       <Navbar />
 
       <main className="max-w-5xl mx-auto px-4 py-8 space-y-6">
-        <h1 className="text-2xl font-bold mb-2">Attendance</h1>
-        <p className="text-sm text-slate-600 mb-4">
+        <h1 className="text-2xl font-bold mb-2 text-slate-900 dark:text-white">Attendance</h1>
+        <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
           CyberVidya attendance is fetched live. Your credentials are not stored
           in our database – they are used only for this session.
         </p>
@@ -528,17 +528,17 @@ export default function AttendancePage() {
         {/* Login card */}
         {!hasLoggedIn && (
           <div className="flex flex-col items-center justify-center min-h-[60vh]">
-            <section className="w-full max-w-md bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+            <section className="w-full max-w-md bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 overflow-hidden">
               {/* Header */}
-              <div className="px-6 py-8 text-center border-b border-slate-50">
-                <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-slate-900">
+              <div className="px-6 py-8 text-center border-b border-slate-50 dark:border-slate-700">
+                <div className="w-16 h-16 bg-slate-50 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-slate-900 dark:text-white">
                     <path d="M12 12c2.485 0 4.5-2.015 4.5-4.5S14.485 3 12 3 7.5 5.015 7.5 7.5 9.515 12 12 12z" fill="currentColor" />
                     <path d="M6 20v-1a4 4 0 014-4h4a4 4 0 014 4v1" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </div>
-                <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Welcome Back</h2>
-                <p className="text-slate-500 text-sm mt-2">
+                <h2 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Welcome Back</h2>
+                <p className="text-slate-500 dark:text-slate-400 text-sm mt-2">
                   Enter your CyberVidya credentials to access your attendance dashboard.
                 </p>
               </div>
@@ -547,12 +547,12 @@ export default function AttendancePage() {
               <div className="p-6 sm:p-8 space-y-6">
                 <form onSubmit={handleSubmit} className="space-y-5">
                   <div className="space-y-1.5">
-                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide">
+                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">
                       Cybervidya ID
                     </label>
                     <div className="relative">
                       <input
-                        className="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm bg-white focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 outline-none transition-all placeholder:text-slate-400"
+                        className="w-full rounded-lg border border-slate-200 dark:border-slate-600 px-4 py-3 text-sm bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:border-slate-900 dark:focus:border-white focus:ring-2 focus:ring-slate-900/10 dark:focus:ring-white/10 outline-none transition-all placeholder:text-slate-400"
                         value={cyberId}
                         onChange={(e) => setCyberId(e.target.value)}
                         placeholder="e.g. 202412345678901"
@@ -561,12 +561,12 @@ export default function AttendancePage() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide">
+                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">
                       Password
                     </label>
                     <div className="relative">
                       <input
-                        className="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm bg-white focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 outline-none transition-all placeholder:text-slate-400"
+                        className="w-full rounded-lg border border-slate-200 dark:border-slate-600 px-4 py-3 text-sm bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:border-slate-900 dark:focus:border-white focus:ring-2 focus:ring-slate-900/10 dark:focus:ring-white/10 outline-none transition-all placeholder:text-slate-400"
                         type="password"
                         value={cyberPass}
                         onChange={(e) => setCyberPass(e.target.value)}
@@ -581,9 +581,9 @@ export default function AttendancePage() {
                         type="checkbox"
                         checked={rememberMe}
                         onChange={(e) => setRememberMe(e.target.checked)}
-                        className="w-4 h-4 rounded border-slate-300 text-slate-900 focus:ring-slate-900"
+                        className="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-slate-900 focus:ring-slate-900"
                       />
-                      <span className="text-sm text-slate-600">Remember Me</span>
+                      <span className="text-sm text-slate-600 dark:text-slate-400">Remember Me</span>
                     </label>
 
                     <div className="flex items-center gap-3">
@@ -591,12 +591,12 @@ export default function AttendancePage() {
                         <input
                           type="checkbox"
                           id="terms"
-                          className="peer h-5 w-5 cursor-pointer appearance-none rounded-md border-2 border-slate-200 transition-all checked:border-slate-900 checked:bg-slate-900 hover:border-slate-300"
+                          className="peer h-5 w-5 cursor-pointer appearance-none rounded-md border-2 border-slate-200 dark:border-slate-600 transition-all checked:border-slate-900 dark:checked:border-white checked:bg-slate-900 dark:checked:bg-white hover:border-slate-300 dark:hover:border-slate-500"
                           checked={acceptedTerms}
                           onChange={(e) => setAcceptedTerms(e.target.checked)}
                         />
                         <svg
-                          className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-white opacity-0 transition-opacity peer-checked:opacity-100"
+                          className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-white dark:text-black opacity-0 transition-opacity peer-checked:opacity-100"
                           xmlns="http://www.w3.org/2000/svg"
                           viewBox="0 0 24 24"
                           fill="none"
@@ -610,12 +610,12 @@ export default function AttendancePage() {
                           <polyline points="20 6 9 17 4 12"></polyline>
                         </svg>
                       </div>
-                      <label htmlFor="terms" className="text-sm text-slate-600 select-none">
+                      <label htmlFor="terms" className="text-sm text-slate-600 dark:text-slate-400 select-none">
                         I agree to the{" "}
                         <button
                           type="button"
                           onClick={() => setShowTerms(true)}
-                          className="font-medium text-indigo-600 hover:text-indigo-700 hover:underline focus:outline-none"
+                          className="font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 hover:underline focus:outline-none"
                         >
                           Terms and Conditions
                         </button>
@@ -626,11 +626,11 @@ export default function AttendancePage() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full rounded-lg bg-slate-900 px-4 py-3.5 text-sm font-bold text-white shadow-lg shadow-slate-900/20 hover:bg-slate-800 hover:shadow-xl hover:shadow-slate-900/30 active:scale-[0.98] transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    className="w-full rounded-lg bg-slate-900 dark:bg-white px-4 py-3.5 text-sm font-bold text-white dark:text-black shadow-lg shadow-slate-900/20 dark:shadow-white/20 hover:bg-slate-800 dark:hover:bg-slate-200 hover:shadow-xl hover:shadow-slate-900/30 dark:hover:shadow-white/30 active:scale-[0.98] transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >
                     {loading ? (
                       <>
-                        <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <svg className="animate-spin h-4 w-4 text-white dark:text-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
@@ -643,7 +643,7 @@ export default function AttendancePage() {
                 </form>
 
                 {error && (
-                  <div className="flex items-start gap-3 p-3 rounded-lg bg-red-50 border border-red-100 text-red-600 text-sm">
+                  <div className="flex items-start gap-3 p-3 rounded-lg bg-red-50 dark:bg-red-900/30 border border-red-100 dark:border-red-800 text-red-600 dark:text-red-300 text-sm">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="flex-shrink-0 mt-0.5">
                       <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
                       <path d="M12 8v4m0 4h.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
@@ -653,7 +653,7 @@ export default function AttendancePage() {
                 )}
 
                 {msg && !error && (
-                  <div className="flex items-start gap-3 p-3 rounded-lg bg-emerald-50 border border-emerald-100 text-emerald-600 text-sm">
+                  <div className="flex items-start gap-3 p-3 rounded-lg bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-100 dark:border-emerald-800 text-emerald-600 dark:text-emerald-300 text-sm">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="flex-shrink-0 mt-0.5">
                       <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
                       <path d="M8 12l2.5 2.5L15.5 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -662,7 +662,7 @@ export default function AttendancePage() {
                   </div>
                 )}
 
-                <div className="pt-4 border-t border-slate-100 text-center">
+                <div className="pt-4 border-t border-slate-100 dark:border-slate-700 text-center">
                   <p className="text-xs text-slate-400 flex items-center justify-center gap-1.5">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />

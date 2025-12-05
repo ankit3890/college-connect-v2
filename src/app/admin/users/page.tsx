@@ -240,7 +240,7 @@ export default function AdminUsersPage() {
     }
 
     return (
-        <div className="min-h-screen bg-slate-100">
+        <div className="min-h-screen bg-slate-100 dark:bg-slate-900 transition-colors duration-300">
             <Navbar />
 
             <main className="max-w-7xl mx-auto px-4 py-4">
@@ -253,12 +253,12 @@ export default function AdminUsersPage() {
                             </svg>
                         </div>
                     </div>
-                    <h1 className="text-3xl font-bold text-slate-900 mb-2">User Management</h1>
-                    <p className="text-slate-600">View and manage all registered users</p>
+                    <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">User Management</h1>
+                    <p className="text-slate-600 dark:text-slate-400">View and manage all registered users</p>
                 </div>
 
                 {/* Filters and Search */}
-                <div className="bg-white rounded-2xl shadow-lg p-6 mb-4 border-2 border-black">
+                <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-6 mb-4 border-2 border-black dark:border-slate-700">
                     <div className="flex flex-col md:flex-row gap-4">
                         <div className="flex-1">
                             <div className="relative">
@@ -267,7 +267,7 @@ export default function AdminUsersPage() {
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                     placeholder="Search by ID, email, or name..."
-                                    className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="w-full pl-10 pr-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-900 text-slate-900 dark:text-white"
                                 />
                                 <svg className="w-5 h-5 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -278,7 +278,7 @@ export default function AdminUsersPage() {
                         <div className="flex gap-2">
                             <button
                                 onClick={() => setFilter("all")}
-                                className={`px-4 py-2 rounded-lg font-medium transition-colors ${filter === "all" ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                                className={`px-4 py-2 rounded-lg font-medium transition-colors ${filter === "all" ? "bg-slate-900 dark:bg-white text-white dark:text-slate-900" : "bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600"
                                     }`}
                             >
                                 All
@@ -310,86 +310,86 @@ export default function AdminUsersPage() {
 
                 {/* Stats */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-                    <div className="bg-white rounded-xl shadow p-4 border-2 border-black">
-                        <div className="text-2xl font-bold text-slate-900">{users.length}</div>
-                        <div className="text-sm text-slate-600">Total Users</div>
+                    <div className="bg-white dark:bg-slate-800 rounded-xl shadow p-4 border-2 border-black dark:border-slate-700">
+                        <div className="text-2xl font-bold text-slate-900 dark:text-white">{users.length}</div>
+                        <div className="text-sm text-slate-600 dark:text-slate-400">Total Users</div>
                     </div>
-                    <div className="bg-white rounded-xl shadow p-4 border-2 border-black">
-                        <div className="text-2xl font-bold text-emerald-600">
+                    <div className="bg-white dark:bg-slate-800 rounded-xl shadow p-4 border-2 border-black dark:border-slate-700">
+                        <div className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
                             {users.filter(u => u.role === "student" || !u.role).length}
                         </div>
-                        <div className="text-sm text-slate-600">Students</div>
+                        <div className="text-sm text-slate-600 dark:text-slate-400">Students</div>
                     </div>
-                    <div className="bg-white rounded-xl shadow p-4 border-2 border-black">
-                        <div className="text-2xl font-bold text-blue-600">
+                    <div className="bg-white dark:bg-slate-800 rounded-xl shadow p-4 border-2 border-black dark:border-slate-700">
+                        <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
                             {users.filter(u => u.role === "admin" || u.role === "superadmin").length}
                         </div>
-                        <div className="text-sm text-slate-600">Admins</div>
+                        <div className="text-sm text-slate-600 dark:text-slate-400">Admins</div>
                     </div>
-                    <div className="bg-white rounded-xl shadow p-4 border-2 border-black">
-                        <div className="text-2xl font-bold text-red-600">
+                    <div className="bg-white dark:bg-slate-800 rounded-xl shadow p-4 border-2 border-black dark:border-slate-700">
+                        <div className="text-2xl font-bold text-red-600 dark:text-red-400">
                             {users.filter(u => u.isBanned).length}
                         </div>
-                        <div className="text-sm text-slate-600">Banned</div>
+                        <div className="text-sm text-slate-600 dark:text-slate-400">Banned</div>
                     </div>
                 </div>
 
                 {/* Users Table */}
                 {loading ? (
-                    <div className="bg-white rounded-2xl shadow-lg p-12 text-center border-2 border-black">
-                        <div className="text-slate-600">Loading users...</div>
+                    <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-12 text-center border-2 border-black dark:border-slate-700">
+                        <div className="text-slate-600 dark:text-slate-400">Loading users...</div>
                     </div>
                 ) : filteredUsers.length === 0 ? (
-                    <div className="bg-white rounded-2xl shadow-lg p-12 text-center border-2 border-black">
-                        <svg className="w-16 h-16 text-slate-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-12 text-center border-2 border-black dark:border-slate-700">
+                        <svg className="w-16 h-16 text-slate-300 dark:text-slate-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                         </svg>
-                        <h3 className="text-lg font-medium text-slate-900 mb-2">No users found</h3>
-                        <p className="text-slate-500 text-sm">
+                        <h3 className="text-lg font-medium text-slate-900 dark:text-white mb-2">No users found</h3>
+                        <p className="text-slate-500 dark:text-slate-400 text-sm">
                             {searchQuery ? "Try adjusting your search query" : "No users registered yet"}
                         </p>
                     </div>
                 ) : (
-                    <div className="bg-white rounded-2xl shadow-lg overflow-hidden border-2 border-black">
+                    <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg overflow-hidden border-2 border-black dark:border-slate-700">
                         <div className="overflow-x-auto">
                             <table className="w-full">
-                                <thead className="bg-slate-50 border-b border-slate-200">
+                                <thead className="bg-slate-50 dark:bg-slate-700 border-b border-slate-200 dark:border-slate-600">
                                     <tr>
-                                        <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">User</th>
-                                        <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">CyberVidya ID</th>
-                                        <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Branch/Year</th>
-                                        <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Role</th>
-                                        <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Status</th>
-                                        <th className="px-6 py-4 text-center text-xs font-semibold text-slate-700 uppercase tracking-wider">Actions</th>
+                                        <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 dark:text-slate-200 uppercase tracking-wider">User</th>
+                                        <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 dark:text-slate-200 uppercase tracking-wider">CyberVidya ID</th>
+                                        <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 dark:text-slate-200 uppercase tracking-wider">Branch/Year</th>
+                                        <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 dark:text-slate-200 uppercase tracking-wider">Role</th>
+                                        <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 dark:text-slate-200 uppercase tracking-wider">Status</th>
+                                        <th className="px-6 py-4 text-center text-xs font-semibold text-slate-700 dark:text-slate-200 uppercase tracking-wider">Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-slate-200">
+                                <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
                                     {filteredUsers.map((user) => {
                                         const displayName = user.name || `${user.firstName || ""} ${user.lastName || ""}`.trim() || "No name";
                                         return (
-                                            <tr key={user._id} className="hover:bg-slate-50 transition-colors">
+                                            <tr key={user._id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
                                                 <td className="px-6 py-4">
                                                     <div className="flex items-center gap-3">
                                                         {user.profilePhoto ? (
                                                             <img src={user.profilePhoto} alt="" className="w-10 h-10 rounded-full object-cover" />
                                                         ) : (
-                                                            <div className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center">
-                                                                <span className="text-slate-600 font-medium">{displayName.charAt(0)}</span>
+                                                            <div className="w-10 h-10 rounded-full bg-slate-200 dark:bg-slate-600 flex items-center justify-center">
+                                                                <span className="text-slate-600 dark:text-slate-200 font-medium">{displayName.charAt(0)}</span>
                                                             </div>
                                                         )}
                                                         <div>
-                                                            <div className="font-medium text-slate-900">{displayName}</div>
-                                                            <div className="text-sm text-slate-500">{user.email}</div>
+                                                            <div className="font-medium text-slate-900 dark:text-white">{displayName}</div>
+                                                            <div className="text-sm text-slate-500 dark:text-slate-400">{user.email}</div>
                                                         </div>
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
-                                                    <span className="font-mono text-sm text-slate-700">{user.studentId}</span>
+                                                    <span className="font-mono text-sm text-slate-700 dark:text-slate-300">{user.studentId}</span>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
-                                                    <div className="text-sm text-slate-700">
+                                                    <div className="text-sm text-slate-700 dark:text-slate-300">
                                                         {user.branch && <div>{user.branch}</div>}
-                                                        {user.year && <div className="text-slate-500">Year {user.year}</div>}
+                                                        {user.year && <div className="text-slate-500 dark:text-slate-400">Year {user.year}</div>}
                                                         {!user.branch && !user.year && <span className="text-slate-400">-</span>}
                                                     </div>
                                                 </td>
@@ -426,8 +426,8 @@ export default function AdminUsersPage() {
                                                             return (
                                                                 <div className="flex flex-col items-start gap-1">
                                                                     <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full border ${isActive
-                                                                        ? "bg-green-100 text-green-800 border-green-300"
-                                                                        : "bg-slate-100 text-slate-600 border-slate-300"
+                                                                        ? "bg-green-100 text-green-800 border-green-300 dark:bg-green-900/30 dark:text-green-300 dark:border-green-700"
+                                                                        : "bg-slate-100 text-slate-600 border-slate-300 dark:bg-slate-700 dark:text-slate-300 dark:border-slate-600"
                                                                         }`}>
                                                                         {isActive ? "Active" : "Offline"}
                                                                     </span>
@@ -446,7 +446,7 @@ export default function AdminUsersPage() {
                                                         <Link
                                                             href={`/u/${user.username || user.studentId}`} // Fallback to studentId if username missing, though username should exist
                                                             target="_blank"
-                                                            className="text-blue-600 hover:text-blue-800 font-medium text-sm"
+                                                            className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium text-sm"
                                                             title="View Profile"
                                                         >
                                                             View
@@ -459,7 +459,7 @@ export default function AdminUsersPage() {
                                                                 <span className="text-slate-300">|</span>
                                                                 <button
                                                                     onClick={() => openEditModal(user)}
-                                                                    className="text-emerald-600 hover:text-emerald-800 font-medium text-sm"
+                                                                    className="text-emerald-600 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 font-medium text-sm"
                                                                     title="Edit User"
                                                                 >
                                                                     Edit
@@ -491,7 +491,7 @@ export default function AdminUsersPage() {
                                                                 <span className="text-slate-300">|</span>
                                                                 <button
                                                                     onClick={() => openDeleteModal(user)}
-                                                                    className="text-slate-500 hover:text-red-600 font-medium text-sm"
+                                                                    className="text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 font-medium text-sm"
                                                                     title="Delete User"
                                                                 >
                                                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -523,13 +523,13 @@ export default function AdminUsersPage() {
             {/* Edit Modal */}
             {showEditModal && selectedUser && (
                 <div className="fixed inset-0 bg-black/30 backdrop-blur-md flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full border-2 border-black">
-                        <div className="p-6 border-b border-slate-200">
+                    <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-md w-full border-2 border-black dark:border-slate-700">
+                        <div className="p-6 border-b border-slate-200 dark:border-slate-700">
                             <div className="flex items-center justify-between">
-                                <h2 className="text-2xl font-bold text-slate-900">Edit User</h2>
+                                <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Edit User</h2>
                                 <button
                                     onClick={() => setShowEditModal(false)}
-                                    className="text-slate-400 hover:text-slate-600"
+                                    className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
                                 >
                                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -539,48 +539,48 @@ export default function AdminUsersPage() {
                         </div>
                         <div className="p-6 space-y-4">
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-2">CyberVidya ID</label>
+                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">CyberVidya ID</label>
                                 <input
                                     type="text"
                                     value={editForm.studentId}
                                     disabled={true}
                                     onChange={(e) => setEditForm({ ...editForm, studentId: e.target.value })}
-                                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-slate-100 text-slate-500 cursor-not-allowed"
+                                    className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-slate-100 dark:bg-slate-900 text-slate-500 dark:text-slate-400 cursor-not-allowed"
                                     placeholder="202412345678901"
                                 />
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-2">Full Name</label>
+                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Full Name</label>
                                 <input
                                     type="text"
                                     value={editForm.name}
                                     disabled={true}
                                     onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-slate-100 text-slate-500 cursor-not-allowed"
+                                    className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-slate-100 dark:bg-slate-900 text-slate-500 dark:text-slate-400 cursor-not-allowed"
                                     placeholder="John Doe"
                                 />
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-2">Username</label>
+                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Username</label>
                                 <input
                                     type="text"
                                     value={editForm.username}
                                     disabled={true}
                                     onChange={(e) => setEditForm({ ...editForm, username: e.target.value })}
-                                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-slate-100 text-slate-500 cursor-not-allowed"
+                                    className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-slate-100 dark:bg-slate-900 text-slate-500 dark:text-slate-400 cursor-not-allowed"
                                     placeholder="@username"
                                 />
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-2">Role</label>
+                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Role</label>
                                 <select
                                     value={editForm.role}
                                     disabled={currentUser?._id === selectedUser?._id}
                                     onChange={(e) => setEditForm({ ...editForm, role: e.target.value })}
-                                    className={`w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${currentUser?._id === selectedUser?._id ? "bg-slate-100 text-slate-500 cursor-not-allowed" : ""}`}
+                                    className={`w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-900 text-slate-900 dark:text-white ${currentUser?._id === selectedUser?._id ? "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 cursor-not-allowed" : ""}`}
                                 >
                                     <option value="student">Student</option>
                                     <option value="tester">Tester</option>
@@ -594,23 +594,23 @@ export default function AdminUsersPage() {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-2">Branch</label>
+                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Branch</label>
                                 <input
                                     type="text"
                                     value={editForm.branch}
                                     onChange={(e) => setEditForm({ ...editForm, branch: e.target.value })}
-                                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-900 text-slate-900 dark:text-white"
                                     placeholder="e.g., Computer Science"
                                 />
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-2">Year</label>
+                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Year</label>
                                 <input
                                     type="number"
                                     value={editForm.year}
                                     onChange={(e) => setEditForm({ ...editForm, year: e.target.value === "" ? "" : parseInt(e.target.value) })}
-                                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-900 text-slate-900 dark:text-white"
                                     min="1"
                                     max="5"
                                 />
@@ -619,7 +619,7 @@ export default function AdminUsersPage() {
                             <div className="flex gap-3 pt-4">
                                 <button
                                     onClick={() => setShowEditModal(false)}
-                                    className="flex-1 px-4 py-2 border border-slate-300 rounded-lg font-medium text-slate-700 hover:bg-slate-50"
+                                    className="flex-1 px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
                                 >
                                     Cancel
                                 </button>
@@ -640,13 +640,13 @@ export default function AdminUsersPage() {
             {
                 showDeleteModal && selectedUser && (
                     <div className="fixed inset-0 bg-black/30 backdrop-blur-md flex items-center justify-center z-50 p-4">
-                        <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full border-2 border-black">
-                            <div className="p-6 border-b border-slate-200">
+                        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-md w-full border-2 border-black dark:border-slate-700">
+                            <div className="p-6 border-b border-slate-200 dark:border-slate-700">
                                 <div className="flex items-center justify-between">
-                                    <h2 className="text-2xl font-bold text-slate-900">Delete User</h2>
+                                    <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Delete User</h2>
                                     <button
                                         onClick={() => setShowDeleteModal(false)}
-                                        className="text-slate-400 hover:text-slate-600"
+                                        className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
                                     >
                                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -655,13 +655,13 @@ export default function AdminUsersPage() {
                                 </div>
                             </div>
                             <div className="p-6 space-y-4">
-                                <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start gap-3">
-                                    <svg className="w-6 h-6 text-red-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 flex items-start gap-3">
+                                    <svg className="w-6 h-6 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                                     </svg>
                                     <div>
-                                        <h3 className="text-red-800 font-semibold">Warning: Irreversible Action</h3>
-                                        <p className="text-red-700 text-sm mt-1">
+                                        <h3 className="text-red-800 dark:text-red-300 font-semibold">Warning: Irreversible Action</h3>
+                                        <p className="text-red-700 dark:text-red-400 text-sm mt-1">
                                             You are about to permanently delete <strong>{selectedUser.name || selectedUser.studentId}</strong>. This action cannot be undone.
                                         </p>
                                     </div>
@@ -670,7 +670,7 @@ export default function AdminUsersPage() {
                                 <div className="flex gap-3 pt-4">
                                     <button
                                         onClick={() => setShowDeleteModal(false)}
-                                        className="flex-1 px-4 py-2 border border-slate-300 rounded-lg font-medium text-slate-700 hover:bg-slate-50"
+                                        className="flex-1 px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
                                     >
                                         Cancel
                                     </button>
@@ -691,15 +691,15 @@ export default function AdminUsersPage() {
             {
                 showBanModal && selectedUser && (
                     <div className="fixed inset-0 bg-black/30 backdrop-blur-md flex items-center justify-center z-50 p-4">
-                        <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full border-2 border-black">
-                            <div className="p-6 border-b border-slate-200">
+                        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-md w-full border-2 border-black dark:border-slate-700">
+                            <div className="p-6 border-b border-slate-200 dark:border-slate-700">
                                 <div className="flex items-center justify-between">
-                                    <h2 className="text-2xl font-bold text-slate-900">
+                                    <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
                                         {selectedUser.isBanned ? "Unban User" : "Ban User"}
                                     </h2>
                                     <button
                                         onClick={() => setShowBanModal(false)}
-                                        className="text-slate-400 hover:text-slate-600"
+                                        className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
                                     >
                                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -708,7 +708,7 @@ export default function AdminUsersPage() {
                                 </div>
                             </div>
                             <div className="p-6 space-y-4">
-                                <p className="text-slate-700">
+                                <p className="text-slate-700 dark:text-slate-300">
                                     {selectedUser.isBanned
                                         ? `Are you sure you want to unban ${selectedUser.name || selectedUser.email}?`
                                         : `Are you sure you want to ban ${selectedUser.name || selectedUser.email}?`
@@ -718,7 +718,7 @@ export default function AdminUsersPage() {
                                 {!selectedUser.isBanned && (
                                     <>
                                         <div>
-                                            <label className="block text-sm font-medium text-slate-700 mb-2">Ban Duration</label>
+                                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Ban Duration</label>
                                             <div className="space-y-2">
                                                 <label className="flex items-center">
                                                     <input
@@ -727,7 +727,7 @@ export default function AdminUsersPage() {
                                                         onChange={() => setBanDurationType("permanent")}
                                                         className="mr-2"
                                                     />
-                                                    <span className="text-sm">Permanent</span>
+                                                    <span className="text-sm text-slate-700 dark:text-slate-300">Permanent</span>
                                                 </label>
                                                 <label className="flex items-center">
                                                     <input
@@ -736,18 +736,18 @@ export default function AdminUsersPage() {
                                                         onChange={() => setBanDurationType("temporary")}
                                                         className="mr-2"
                                                     />
-                                                    <span className="text-sm">Temporary</span>
+                                                    <span className="text-sm text-slate-700 dark:text-slate-300">Temporary</span>
                                                 </label>
                                             </div>
                                         </div>
 
                                         {banDurationType === "temporary" && (
                                             <div>
-                                                <label className="block text-sm font-medium text-slate-700 mb-2">Duration (minutes)</label>
+                                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Duration (minutes)</label>
                                                 <select
                                                     value={banDuration}
                                                     onChange={(e) => setBanDuration(parseInt(e.target.value))}
-                                                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                                                    className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 bg-white dark:bg-slate-900 text-slate-900 dark:text-white"
                                                 >
                                                     <option value={60}>1 hour</option>
                                                     <option value={360}>6 hours</option>
@@ -760,11 +760,11 @@ export default function AdminUsersPage() {
                                         )}
 
                                         <div>
-                                            <label className="block text-sm font-medium text-slate-700 mb-2">Reason (optional)</label>
+                                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Reason (optional)</label>
                                             <textarea
                                                 value={banReason}
                                                 onChange={(e) => setBanReason(e.target.value)}
-                                                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                                                className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 bg-white dark:bg-slate-900 text-slate-900 dark:text-white"
                                                 rows={3}
                                                 placeholder="Enter reason for banning..."
                                             />
@@ -775,7 +775,7 @@ export default function AdminUsersPage() {
                                 <div className="flex gap-3 pt-4">
                                     <button
                                         onClick={() => setShowBanModal(false)}
-                                        className="flex-1 px-4 py-2 border border-slate-300 rounded-lg font-medium text-slate-700 hover:bg-slate-50"
+                                        className="flex-1 px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
                                     >
                                         Cancel
                                     </button>

@@ -104,19 +104,19 @@ export default function SettingsLogsPage() {
   const pageInfo =
     total > 0
       ? `Showing ${(page - 1) * limit + 1}–${Math.min(
-          page * limit,
-          total
-        )} of ${total}`
+        page * limit,
+        total
+      )} of ${total}`
       : "No logs";
 
   // Only superadmin allowed
   if (myRole && myRole !== "superadmin") {
     return (
-      <div className="min-h-screen bg-slate-100">
+      <div className="min-h-screen bg-slate-100 dark:bg-slate-900 transition-colors duration-300">
         <Navbar />
         <main className="max-w-3xl mx-auto px-4 py-10">
-          <h1 className="text-2xl font-bold mb-2">Settings Logs</h1>
-          <p className="text-sm text-slate-600">
+          <h1 className="text-2xl font-bold mb-2 text-slate-900 dark:text-white">Settings Logs</h1>
+          <p className="text-sm text-slate-600 dark:text-slate-400">
             Only superadmin can view settings change history.
           </p>
         </main>
@@ -125,20 +125,20 @@ export default function SettingsLogsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-100">
+    <div className="min-h-screen bg-slate-100 dark:bg-slate-900 transition-colors duration-300">
       <Navbar />
 
       <main className="max-w-4xl mx-auto px-4 py-8 space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-bold">System Settings Change Log</h1>
-            <p className="text-sm text-slate-600">
+            <h1 className="text-2xl font-bold text-slate-900 dark:text-white">System Settings Change Log</h1>
+            <p className="text-sm text-slate-600 dark:text-slate-400">
               History of all updates made in the System Settings page.
             </p>
           </div>
           <button
             onClick={() => loadLogs({ keepPage: true })}
-            className="rounded-md border border-slate-300 px-3 py-1 text-xs sm:text-sm font-semibold text-slate-700 hover:bg-slate-50"
+            className="rounded-md border border-slate-300 dark:border-slate-600 px-3 py-1 text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
           >
             Refresh
           </button>
@@ -150,9 +150,9 @@ export default function SettingsLogsPage() {
           </div>
         )}
 
-        <section className="rounded-xl bg-white border shadow-sm overflow-x-auto">
-          <table className="min-w-full text-sm">
-            <thead className="bg-slate-50">
+        <section className="rounded-xl bg-white dark:bg-slate-800 border dark:border-slate-700 shadow-sm overflow-x-auto">
+          <table className="min-w-full text-sm text-slate-900 dark:text-slate-200">
+            <thead className="bg-slate-50 dark:bg-slate-700">
               <tr>
                 <th className="px-3 py-2 text-left font-semibold">Time</th>
                 <th className="px-3 py-2 text-left font-semibold">Actor</th>
@@ -172,7 +172,7 @@ export default function SettingsLogsPage() {
                 <tr>
                   <td
                     colSpan={5}
-                    className="px-3 py-4 text-center text-slate-500"
+                    className="px-3 py-4 text-center text-slate-500 dark:text-slate-400"
                   >
                     Loading logs…
                   </td>
@@ -181,7 +181,7 @@ export default function SettingsLogsPage() {
                 <tr>
                   <td
                     colSpan={5}
-                    className="px-3 py-4 text-center text-slate-500"
+                    className="px-3 py-4 text-center text-slate-500 dark:text-slate-400"
                   >
                     No settings changes found.
                   </td>
@@ -202,15 +202,15 @@ export default function SettingsLogsPage() {
                     log.metadata?.allowRegistration === true
                       ? "Enabled"
                       : log.metadata?.allowRegistration === false
-                      ? "Disabled"
-                      : "—";
+                        ? "Disabled"
+                        : "—";
 
                   const maint =
                     log.metadata?.maintenanceMode === true
                       ? "ON"
                       : log.metadata?.maintenanceMode === false
-                      ? "OFF"
-                      : "—";
+                        ? "OFF"
+                        : "—";
 
                   const msg =
                     log.metadata?.maintenanceMessage ||
@@ -218,14 +218,14 @@ export default function SettingsLogsPage() {
                     "";
 
                   return (
-                    <tr key={log._id} className="border-t">
+                    <tr key={log._id} className="border-t dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
                       <td className="px-3 py-2 text-xs">{created}</td>
                       <td className="px-3 py-2">
                         <div className="flex flex-col">
                           <span className="font-semibold text-xs">
                             {actorName}
                           </span>
-                          <span className="text-[11px] text-slate-500">
+                          <span className="text-[11px] text-slate-500 dark:text-slate-400">
                             {log.actorStudentId} • {actorRole}
                           </span>
                         </div>
@@ -236,7 +236,7 @@ export default function SettingsLogsPage() {
                         {msg ? (
                           <span className="line-clamp-3">{msg}</span>
                         ) : (
-                          <span className="text-slate-400">—</span>
+                          <span className="text-slate-400 dark:text-slate-500">—</span>
                         )}
                       </td>
                     </tr>
@@ -248,23 +248,23 @@ export default function SettingsLogsPage() {
         </section>
 
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs sm:text-sm">
-          <span className="text-slate-600">{pageInfo}</span>
+          <span className="text-slate-600 dark:text-slate-400">{pageInfo}</span>
 
           <div className="flex items-center gap-2">
             <button
               onClick={() => goToPage(page - 1)}
               disabled={page <= 1}
-              className="px-2 py-1 border rounded-md disabled:opacity-50 bg-white hover:bg-slate-50"
+              className="px-2 py-1 border dark:border-slate-600 rounded-md disabled:opacity-50 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
             >
               ← Prev
             </button>
-            <span className="text-slate-600">
+            <span className="text-slate-600 dark:text-slate-400">
               Page {page} of {totalPages}
             </span>
             <button
               onClick={() => goToPage(page + 1)}
               disabled={page >= totalPages}
-              className="px-2 py-1 border rounded-md disabled:opacity-50 bg-white hover:bg-slate-50"
+              className="px-2 py-1 border dark:border-slate-600 rounded-md disabled:opacity-50 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
             >
               Next →
             </button>

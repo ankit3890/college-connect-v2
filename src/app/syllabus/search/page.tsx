@@ -26,27 +26,27 @@ export default function SyllabusSearchPage() {
     }, []);
 
     return (
-        <div className="min-h-screen bg-slate-100">
+        <div className="min-h-screen bg-slate-100 dark:bg-slate-900 transition-colors duration-300">
             <Navbar />
 
             <main className="max-w-5xl mx-auto px-4 py-6">
                 {/* Header */}
                 <div className="text-center mb-6">
                     <div className="flex justify-center mb-4">
-                        <div className="w-16 h-16 bg-white rounded-2xl shadow-lg flex items-center justify-center">
-                            <svg className="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div className="w-16 h-16 bg-white dark:bg-slate-800 rounded-2xl shadow-lg flex items-center justify-center border-2 border-black dark:border-slate-700">
+                            <svg className="w-8 h-8 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                             </svg>
                         </div>
                     </div>
-                    <h1 className="text-3xl font-bold text-slate-900 mb-2">Syllabus Search</h1>
-                    <p className="text-slate-600">
+                    <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">Syllabus Search</h1>
+                    <p className="text-slate-600 dark:text-slate-400">
                         Search for course syllabi by subject code or name
                     </p>
                 </div>
 
                 {/* Search Card */}
-                <div className="bg-white rounded-2xl shadow-lg p-4 mb-4 border-2 border-black">
+                <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-4 mb-4 border-2 border-black dark:border-slate-700">
                     <SearchBox
                         onResults={(r) => {
                             setResults(r);
@@ -57,40 +57,40 @@ export default function SyllabusSearchPage() {
 
                 {/* Results */}
                 {results.length > 0 && (
-                    <div className="bg-white rounded-2xl shadow-lg overflow-hidden border-2 border-black">
-                        <div className="px-6 py-4 border-b border-slate-200">
-                            <h2 className="text-lg font-semibold text-slate-900">
+                    <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg overflow-hidden border-2 border-black dark:border-slate-700">
+                        <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700">
+                            <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
                                 Subjects ({results.length})
                             </h2>
                         </div>
                         <div className="overflow-x-auto">
                             <table className="w-full">
-                                <thead className="bg-slate-50">
+                                <thead className="bg-slate-50 dark:bg-slate-700">
                                     <tr>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-slate-700 uppercase tracking-wider">
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-slate-700 dark:text-slate-200 uppercase tracking-wider">
                                             Subject Code
                                         </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-slate-700 uppercase tracking-wider">
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-slate-700 dark:text-slate-200 uppercase tracking-wider">
                                             Subject Name
                                         </th>
-                                        <th className="px-6 py-3 text-center text-xs font-medium text-slate-700 uppercase tracking-wider">
+                                        <th className="px-6 py-3 text-center text-xs font-medium text-slate-700 dark:text-slate-200 uppercase tracking-wider">
                                             Action
                                         </th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-slate-200">
+                                <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
                                     {results.map((res: any) => {
                                         const meta = res.matchData.metadata;
                                         const link = `/syllabus/subject/${res.id}${res.entryId ? `?entry=${res.entryId}` : ""}`;
                                         return (
-                                            <tr key={res.ref} className="hover:bg-slate-50 transition-colors">
+                                            <tr key={res.ref} className="hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
                                                 <td className="px-6 py-4 whitespace-nowrap">
-                                                    <span className="font-mono text-sm font-medium text-slate-900">
+                                                    <span className="font-mono text-sm font-medium text-slate-900 dark:text-white">
                                                         {meta.code || "-"}
                                                     </span>
                                                 </td>
                                                 <td className="px-6 py-4">
-                                                    <span className="text-sm text-slate-700">
+                                                    <span className="text-sm text-slate-700 dark:text-slate-300">
                                                         {meta.subject || meta.title}
                                                     </span>
                                                 </td>
