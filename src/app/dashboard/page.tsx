@@ -21,9 +21,9 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-slate-100">
       <Navbar />
 
-      <main className="max-w-4xl mx-auto px-4 py-12">
+      <main className="max-w-4xl mx-auto px-4 py-8">
         {/* Header */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
             <div className="w-16 h-16 bg-white rounded-2xl shadow-lg flex items-center justify-center">
               <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -38,17 +38,17 @@ export default function DashboardPage() {
         </div>
 
         {/* User Search */}
-        <div className="mb-8">
+        <div className="mb-6">
           <UserSearch />
         </div>
 
         {/* Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Attendance Card */}
           <Link
             href="/attendance"
             onClick={() => logActivity("ACCESS_ATTENDANCE", "Accessed Attendance")}
-            className="group bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-all duration-200 border-2 border-black hover:border-blue-500"
+            className="group bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-200 border-2 border-black hover:border-blue-500"
           >
             <div className="flex items-start gap-4">
               <div className="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
@@ -77,7 +77,7 @@ export default function DashboardPage() {
           <Link
             href="/syllabus/search"
             onClick={() => logActivity("ACCESS_SYLLABUS", "Accessed Syllabus")}
-            className="group bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-all duration-200 border-2 border-black hover:border-emerald-500"
+            className="group bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-200 border-2 border-black hover:border-emerald-500"
           >
             <div className="flex items-start gap-4">
               <div className="w-14 h-14 bg-emerald-100 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
@@ -106,7 +106,7 @@ export default function DashboardPage() {
           <Link
             href="/profile"
             onClick={() => logActivity("ACCESS_PROFILE", "Accessed Profile")}
-            className="group bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-all duration-200 border-2 border-black hover:border-purple-500"
+            className="group bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-200 border-2 border-black hover:border-purple-500"
           >
             <div className="flex items-start gap-4">
               <div className="w-14 h-14 bg-purple-100 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
@@ -135,7 +135,7 @@ export default function DashboardPage() {
           <Link
             href="/settings"
             onClick={() => logActivity("ACCESS_SETTINGS", "Accessed Settings")}
-            className="group bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-all duration-200 border-2 border-black hover:border-slate-500"
+            className="group bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-200 border-2 border-black hover:border-slate-500"
           >
             <div className="flex items-start gap-4">
               <div className="w-14 h-14 bg-slate-100 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">

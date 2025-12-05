@@ -225,15 +225,15 @@ export default function PublicProfilePage() {
     const accentColor = profile.accentColor || "#3b82f6";
 
     return (
-        <div className="min-h-screen bg-slate-100 pb-12">
+        <div className="min-h-screen bg-slate-100 pb-8">
             <Navbar />
 
-            <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 space-y-6">
+            <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 space-y-4">
                 {/* HEADER CARD */}
                 <div className="bg-white rounded-2xl shadow-lg overflow-hidden border-2 border-black">
                     {/* Banner */}
                     <div
-                        className="h-32 sm:h-48 w-full bg-cover bg-center relative"
+                        className="h-28 sm:h-40 w-full bg-cover bg-center relative"
                         style={{
                             backgroundColor: accentColor,
                             backgroundImage: profile.bannerUrl ? `url(${profile.bannerUrl})` : undefined,
@@ -244,10 +244,10 @@ export default function PublicProfilePage() {
                         )}
                     </div>
 
-                    <div className="px-6 pb-6 relative">
+                    <div className="px-4 pb-4 sm:px-6 sm:pb-6 relative">
                         {/* Avatar */}
-                        <div className="absolute -top-16 left-6">
-                            <div className="w-32 h-32 rounded-full border-4 border-white bg-white shadow-md overflow-hidden">
+                        <div className="absolute -top-12 left-4 sm:left-6">
+                            <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full border-4 border-white bg-white shadow-md overflow-hidden">
                                 {profile.avatarUrl ? (
                                     <img
                                         src={profile.avatarUrl}
@@ -256,7 +256,7 @@ export default function PublicProfilePage() {
                                     />
                                 ) : (
                                     <div
-                                        className="w-full h-full flex items-center justify-center text-4xl font-bold text-white"
+                                        className="w-full h-full flex items-center justify-center text-3xl sm:text-4xl font-bold text-white"
                                         style={{ backgroundColor: accentColor }}
                                     >
                                         {(profile.displayName || profile.name || "?").charAt(0).toUpperCase()}
@@ -266,12 +266,12 @@ export default function PublicProfilePage() {
                         </div>
 
                         {/* Header Actions */}
-                        <div className="flex justify-end pt-4 min-h-[60px] gap-3">
+                        <div className="flex justify-end pt-3 min-h-[50px] gap-2">
                             {isOwnProfile ? (
                                 <>
                                     <Link
                                         href="/profile/edit"
-                                        className="px-6 py-2 bg-white border-2 border-black rounded-xl text-sm font-bold text-slate-900 hover:bg-slate-50 transition-all shadow-sm hover:shadow-md"
+                                        className="px-4 py-1.5 bg-white border-2 border-black rounded-lg text-sm font-bold text-slate-900 hover:bg-slate-50 transition-all shadow-sm hover:shadow-md"
                                     >
                                         Edit Profile
                                     </Link>
@@ -280,7 +280,7 @@ export default function PublicProfilePage() {
                                 <button
                                     onClick={handleFollowToggle}
                                     disabled={followLoading}
-                                    className={`px-6 py-2 rounded-xl text-sm font-bold transition-all shadow-sm hover:shadow-md border-2 ${isFollowing
+                                    className={`px-4 py-1.5 rounded-lg text-sm font-bold transition-all shadow-sm hover:shadow-md border-2 ${isFollowing
                                         ? "bg-white border-black text-slate-900 hover:bg-red-50 hover:text-red-600 hover:border-red-500"
                                         : "bg-black border-black text-white hover:bg-slate-800"
                                         }`}
@@ -291,26 +291,26 @@ export default function PublicProfilePage() {
                         </div>
 
                         {/* User Info */}
-                        <div className="mt-6">
-                            <div className="flex flex-col sm:flex-row sm:items-end gap-2 sm:gap-4">
-                                <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">
+                        <div className="mt-4 sm:mt-6">
+                            <div className="flex flex-col sm:flex-row sm:items-end gap-1 sm:gap-4">
+                                <h1 className="text-xl sm:text-3xl font-bold text-slate-900">
                                     {profile.name}
                                 </h1>
                                 {profile.hasSyncedFromCyberVidya && (
-                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 mb-1.5 border border-green-200">
+                                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-medium bg-green-100 text-green-800 mb-1 border border-green-200">
                                         Synced with CyberVidya ✅
                                     </span>
                                 )}
                             </div>
 
-                            <p className="text-slate-500 font-medium">@{profile.username}</p>
+                            <p className="text-slate-500 font-medium text-sm sm:text-base">@{profile.username}</p>
 
                             {profile.statusText && (
-                                <p className="text-slate-600 mt-2 italic text-sm">"{profile.statusText}"</p>
+                                <p className="text-slate-600 mt-1 italic text-sm">"{profile.statusText}"</p>
                             )}
 
                             {/* Follow Counts */}
-                            <div className="flex gap-6 mt-4 text-sm">
+                            <div className="flex gap-4 sm:gap-6 mt-3 text-sm">
                                 <button onClick={() => fetchUserList("following")} className="hover:underline">
                                     <span className="font-bold text-slate-900">{profile.followingCount || 0}</span> <span className="text-slate-500">Following</span>
                                 </button>
@@ -320,9 +320,9 @@ export default function PublicProfilePage() {
                             </div>
 
                             {/* Chips Row */}
-                            <div className="flex flex-wrap gap-2 mt-4">
+                            <div className="flex flex-wrap gap-2 mt-3">
                                 {profile.role && profile.role !== "student" && (
-                                    <span className="px-3 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800 border border-purple-200 capitalize">
+                                    <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 border border-purple-200 capitalize">
                                         {profile.role}
                                     </span>
                                 )}
@@ -332,9 +332,9 @@ export default function PublicProfilePage() {
                 </div>
 
                 {/* DETAILS CARD (Split Layout) */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {/* LEFT: College Details (Locked) */}
-                    <div className="bg-white rounded-2xl shadow-lg border-2 border-black p-6 md:col-span-1 h-fit">
+                    <div className="bg-white rounded-2xl shadow-lg border-2 border-black p-4 sm:p-6 md:col-span-1 h-fit">
                         <div className="flex items-center gap-2 mb-4 border-b border-slate-100 pb-3">
                             <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
@@ -391,7 +391,7 @@ export default function PublicProfilePage() {
                     </div>
 
                     {/* RIGHT: Personal Profile */}
-                    <div className="bg-white rounded-2xl shadow-lg border-2 border-black p-6 md:col-span-2">
+                    <div className="bg-white rounded-2xl shadow-lg border-2 border-black p-4 sm:p-6 md:col-span-2">
                         <div className="flex items-center gap-2 mb-4 border-b border-slate-100 pb-3">
                             <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
