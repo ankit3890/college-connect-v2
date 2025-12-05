@@ -243,9 +243,9 @@ export default function AdminUsersPage() {
         <div className="min-h-screen bg-slate-100">
             <Navbar />
 
-            <main className="max-w-7xl mx-auto px-4 py-12">
+            <main className="max-w-7xl mx-auto px-4 py-4">
                 {/* Header */}
-                <div className="text-center mb-12">
+                <div className="text-center mb-4">
                     <div className="flex justify-center mb-4">
                         <div className="w-16 h-16 bg-white rounded-2xl shadow-lg flex items-center justify-center">
                             <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -258,7 +258,7 @@ export default function AdminUsersPage() {
                 </div>
 
                 {/* Filters and Search */}
-                <div className="bg-white rounded-2xl shadow-lg p-6 mb-6 border-2 border-black">
+                <div className="bg-white rounded-2xl shadow-lg p-6 mb-4 border-2 border-black">
                     <div className="flex flex-col md:flex-row gap-4">
                         <div className="flex-1">
                             <div className="relative">
@@ -309,7 +309,7 @@ export default function AdminUsersPage() {
                 </div>
 
                 {/* Stats */}
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
                     <div className="bg-white rounded-xl shadow p-4 border-2 border-black">
                         <div className="text-2xl font-bold text-slate-900">{users.length}</div>
                         <div className="text-sm text-slate-600">Total Users</div>

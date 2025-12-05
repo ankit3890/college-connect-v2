@@ -196,7 +196,7 @@ export default function PublicProfilePage() {
         return (
             <div className="min-h-screen bg-slate-50">
                 <Navbar />
-                <div className="max-w-4xl mx-auto px-4 py-12 text-center">
+                <div className="max-w-4xl mx-auto px-4 py-6 text-center">
                     <h1 className="text-2xl font-bold text-slate-800 mb-4">Profile not found</h1>
                     <p className="text-slate-600 mb-6">{error || "The user you are looking for does not exist or is private."}</p>
                     <div className="flex flex-col items-center gap-4">
@@ -225,15 +225,15 @@ export default function PublicProfilePage() {
     const accentColor = profile.accentColor || "#3b82f6";
 
     return (
-        <div className="min-h-screen bg-slate-100 pb-8">
+        <div className="min-h-screen bg-slate-100 pb-4">
             <Navbar />
 
-            <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 space-y-4">
+            <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 space-y-3">
                 {/* HEADER CARD */}
-                <div className="bg-white rounded-2xl shadow-lg overflow-hidden border-2 border-black">
+                <div className="bg-white rounded-xl shadow-md overflow-hidden border-2 border-black">
                     {/* Banner */}
                     <div
-                        className="h-28 sm:h-40 w-full bg-cover bg-center relative"
+                        className="h-24 sm:h-32 w-full bg-cover bg-center relative"
                         style={{
                             backgroundColor: accentColor,
                             backgroundImage: profile.bannerUrl ? `url(${profile.bannerUrl})` : undefined,
@@ -246,8 +246,8 @@ export default function PublicProfilePage() {
 
                     <div className="px-4 pb-4 sm:px-6 sm:pb-6 relative">
                         {/* Avatar */}
-                        <div className="absolute -top-12 left-4 sm:left-6">
-                            <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full border-4 border-white bg-white shadow-md overflow-hidden">
+                        <div className="absolute -top-10 left-4 sm:left-6">
+                            <div className="w-20 h-20 sm:w-28 sm:h-28 rounded-full border-4 border-white bg-white shadow-sm overflow-hidden">
                                 {profile.avatarUrl ? (
                                     <img
                                         src={profile.avatarUrl}
@@ -256,7 +256,7 @@ export default function PublicProfilePage() {
                                     />
                                 ) : (
                                     <div
-                                        className="w-full h-full flex items-center justify-center text-3xl sm:text-4xl font-bold text-white"
+                                        className="w-full h-full flex items-center justify-center text-2xl sm:text-3xl font-bold text-white"
                                         style={{ backgroundColor: accentColor }}
                                     >
                                         {(profile.displayName || profile.name || "?").charAt(0).toUpperCase()}
@@ -266,12 +266,12 @@ export default function PublicProfilePage() {
                         </div>
 
                         {/* Header Actions */}
-                        <div className="flex justify-end pt-3 min-h-[50px] gap-2">
+                        <div className="flex justify-end pt-2 min-h-[40px] gap-2">
                             {isOwnProfile ? (
                                 <>
                                     <Link
                                         href="/profile/edit"
-                                        className="px-4 py-1.5 bg-white border-2 border-black rounded-lg text-sm font-bold text-slate-900 hover:bg-slate-50 transition-all shadow-sm hover:shadow-md"
+                                        className="px-3 py-1 bg-white border border-slate-300 rounded-lg text-xs font-bold text-slate-700 hover:bg-slate-50 transition-all shadow-sm"
                                     >
                                         Edit Profile
                                     </Link>
@@ -280,8 +280,8 @@ export default function PublicProfilePage() {
                                 <button
                                     onClick={handleFollowToggle}
                                     disabled={followLoading}
-                                    className={`px-4 py-1.5 rounded-lg text-sm font-bold transition-all shadow-sm hover:shadow-md border-2 ${isFollowing
-                                        ? "bg-white border-black text-slate-900 hover:bg-red-50 hover:text-red-600 hover:border-red-500"
+                                    className={`px-3 py-1 rounded-lg text-xs font-bold transition-all shadow-sm border ${isFollowing
+                                        ? "bg-white border-slate-300 text-slate-700 hover:bg-red-50 hover:text-red-600 hover:border-red-200"
                                         : "bg-black border-black text-white hover:bg-slate-800"
                                         }`}
                                 >
@@ -291,26 +291,26 @@ export default function PublicProfilePage() {
                         </div>
 
                         {/* User Info */}
-                        <div className="mt-4 sm:mt-6">
-                            <div className="flex flex-col sm:flex-row sm:items-end gap-1 sm:gap-4">
-                                <h1 className="text-xl sm:text-3xl font-bold text-slate-900">
+                        <div className="mt-3 sm:mt-12">
+                            <div className="flex flex-col sm:flex-row sm:items-end gap-1 sm:gap-3">
+                                <h1 className="text-lg sm:text-2xl font-bold text-slate-900">
                                     {profile.name}
                                 </h1>
                                 {profile.hasSyncedFromCyberVidya && (
-                                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-medium bg-green-100 text-green-800 mb-1 border border-green-200">
-                                        Synced with CyberVidya ✅
+                                    <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-green-100 text-green-800 mb-1 border border-green-200">
+                                        Synced ✅
                                     </span>
                                 )}
                             </div>
 
-                            <p className="text-slate-500 font-medium text-sm sm:text-base">@{profile.username}</p>
+                            <p className="text-slate-500 font-medium text-xs sm:text-sm">@{profile.username}</p>
 
                             {profile.statusText && (
-                                <p className="text-slate-600 mt-1 italic text-sm">"{profile.statusText}"</p>
+                                <p className="text-slate-600 mt-1 italic text-xs sm:text-sm">"{profile.statusText}"</p>
                             )}
 
                             {/* Follow Counts */}
-                            <div className="flex gap-4 sm:gap-6 mt-3 text-sm">
+                            <div className="flex gap-3 sm:gap-5 mt-2 text-xs sm:text-sm">
                                 <button onClick={() => fetchUserList("following")} className="hover:underline">
                                     <span className="font-bold text-slate-900">{profile.followingCount || 0}</span> <span className="text-slate-500">Following</span>
                                 </button>
@@ -320,9 +320,9 @@ export default function PublicProfilePage() {
                             </div>
 
                             {/* Chips Row */}
-                            <div className="flex flex-wrap gap-2 mt-3">
+                            <div className="flex flex-wrap gap-1.5 mt-2">
                                 {profile.role && profile.role !== "student" && (
-                                    <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 border border-purple-200 capitalize">
+                                    <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-purple-100 text-purple-800 border border-purple-200 capitalize">
                                         {profile.role}
                                     </span>
                                 )}
@@ -332,188 +332,165 @@ export default function PublicProfilePage() {
                 </div>
 
                 {/* DETAILS CARD (Split Layout) */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     {/* LEFT: College Details (Locked) */}
-                    <div className="bg-white rounded-2xl shadow-lg border-2 border-black p-4 sm:p-6 md:col-span-1 h-fit">
-                        <div className="flex items-center gap-2 mb-4 border-b border-slate-100 pb-3">
-                            <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="bg-white rounded-xl shadow-md border-2 border-black p-4 sm:col-span-1 h-fit">
+                        <div className="flex items-center gap-2 mb-3 border-b border-slate-100 pb-2">
+                            <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                             </svg>
-                            <h2 className="text-lg font-semibold text-slate-800">College Details</h2>
+                            <h2 className="font-bold text-sm text-slate-900">College Details</h2>
                         </div>
-
-                        <div className="space-y-4">
+                        <div className="space-y-2">
                             <div>
-                                <label className="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-1">Official Name</label>
-                                <p className="text-slate-900 font-medium">{profile.name || "N/A"}</p>
+                                <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Branch</label>
+                                <p className="font-medium text-slate-900 text-sm">{profile.branch || "Not set"}</p>
                             </div>
-                            <div className="border-b border-slate-300"></div>
-
                             <div>
-                                <label className="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-1">CyberVidya ID</label>
-                                <p className="text-slate-900 font-mono text-sm">{profile.studentId || "N/A"}</p>
+                                <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Year</label>
+                                <p className="font-medium text-slate-900 text-sm">{profile.year || "Not set"}</p>
                             </div>
-                            <div className="border-b border-slate-300"></div>
-
                             <div>
-                                <label className="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-1">College Email</label>
-                                <p className="text-slate-900 break-all">{profile.email || "N/A"}</p>
-                            </div>
-                            <div className="border-b border-slate-300"></div>
-
-                            <div>
-                                <label className="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-1">Branch</label>
-                                <p className="text-slate-900">
-                                    {profile.branch || (profile.showBranchYear === false ? <span className="text-slate-400 italic">Hidden by user</span> : "N/A")}
+                                <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Student ID</label>
+                                <p className="font-medium text-slate-900 font-mono text-xs bg-slate-50 px-1.5 py-0.5 rounded inline-block mt-0.5">
+                                    {profile.studentId}
                                 </p>
                             </div>
-                            <div className="border-b border-slate-300"></div>
-
                             <div>
-                                <label className="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-1">Year</label>
-                                <p className="text-slate-900">
-                                    {profile.year ? `Year ${profile.year}` : (profile.showBranchYear === false ? <span className="text-slate-400 italic">Hidden by user</span> : "N/A")}
-                                </p>
+                                <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">College Email</label>
+                                <p className="font-medium text-slate-900 text-xs break-all">{profile.email}</p>
                             </div>
-                            <div className="border-b border-slate-300"></div>
-
                             <div>
-                                <label className="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-1">Gender</label>
-                                <p className="text-slate-900 capitalize">{profile.gender || "N/A"}</p>
+                                <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Gender</label>
+                                <p className="font-medium text-slate-900 text-sm capitalize">{profile.gender || "Not set"}</p>
                             </div>
-                        </div>
-
-                        <div className="mt-6 pt-4 border-t border-slate-100">
-                            <p className="text-xs text-slate-400 text-center">
-                                These details are synced from CyberVidya and cannot be edited here.
-                            </p>
                         </div>
                     </div>
 
                     {/* RIGHT: Personal Profile */}
-                    <div className="bg-white rounded-2xl shadow-lg border-2 border-black p-4 sm:p-6 md:col-span-2">
-                        <div className="flex items-center gap-2 mb-4 border-b border-slate-100 pb-3">
-                            <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="bg-white rounded-xl shadow-md border-2 border-black p-4 sm:col-span-2">
+                        <div className="flex items-center gap-2 mb-3 border-b border-slate-100 pb-2">
+                            <svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                             </svg>
-                            <h2 className="text-lg font-semibold text-slate-800">About</h2>
+                            <h2 className="font-bold text-sm text-slate-900">About</h2>
                         </div>
 
-                        <div className="space-y-6">
+                        <div className="space-y-3">
                             {/* Username in About */}
                             <div>
-                                <h3 className="text-sm font-semibold text-slate-700 mb-2">Username</h3>
-                                <p className="text-slate-600">@{profile.username}</p>
+                                <h3 className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-0.5">Username</h3>
+                                <p className="font-medium text-slate-900 text-sm">@{profile.username}</p>
                             </div>
-                            <div className="border-b border-slate-300"></div>
+                            <div className="border-b border-slate-50"></div>
 
                             {/* Bio */}
                             <div>
-                                <h3 className="text-sm font-semibold text-slate-700 mb-2">Bio</h3>
-                                <p className="text-slate-600 whitespace-pre-wrap leading-relaxed">
+                                <h3 className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-0.5">Bio</h3>
+                                <p className="text-slate-600 whitespace-pre-wrap leading-relaxed text-sm">
                                     {profile.bio || "No bio added yet."}
                                 </p>
                             </div>
-                            <div className="border-b border-slate-300"></div>
+                            <div className="border-b border-slate-50"></div>
 
                             {/* Interests & Skills */}
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <div>
-                                    <h3 className="text-sm font-semibold text-slate-700 mb-2">Interests</h3>
+                                    <h3 className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1.5">Interests</h3>
                                     {profile.interests && profile.interests.length > 0 ? (
-                                        <div className="flex flex-wrap gap-2">
+                                        <div className="flex flex-wrap gap-1.5">
                                             {profile.interests.map((tag, i) => (
-                                                <span key={i} className="px-2.5 py-1 rounded-md bg-slate-100 text-slate-600 text-xs font-medium">
+                                                <span key={i} className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 text-xs font-medium">
                                                     {tag}
                                                 </span>
                                             ))}
                                         </div>
                                     ) : (
-                                        <p className="text-sm text-slate-400 italic">None added</p>
+                                        <p className="text-xs text-slate-400 italic">None added</p>
                                     )}
                                 </div>
 
                                 <div>
-                                    <h3 className="text-sm font-semibold text-slate-700 mb-2">Skills</h3>
+                                    <h3 className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1.5">Skills</h3>
                                     {profile.skills && profile.skills.length > 0 ? (
-                                        <div className="flex flex-wrap gap-2">
+                                        <div className="flex flex-wrap gap-1.5">
                                             {profile.skills.map((tag, i) => (
-                                                <span key={i} className="px-2.5 py-1 rounded-md bg-blue-50 text-blue-600 text-xs font-medium">
+                                                <span key={i} className="px-2 py-0.5 rounded-md bg-blue-50 text-blue-600 text-xs font-medium">
                                                     {tag}
                                                 </span>
                                             ))}
                                         </div>
                                     ) : (
-                                        <p className="text-sm text-slate-400 italic">None added</p>
+                                        <p className="text-xs text-slate-400 italic">None added</p>
                                     )}
                                 </div>
                             </div>
-                            <div className="border-b border-slate-300"></div>
+                            <div className="border-b border-slate-50"></div>
 
                             {/* Socials */}
                             <div>
-                                <h3 className="text-sm font-semibold text-slate-700 mb-3">Connect</h3>
-                                <div className="flex flex-wrap gap-3">
+                                <h3 className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-2">Connect</h3>
+                                <div className="flex flex-wrap gap-2">
                                     {profile.socials?.github && (
                                         <a href={profile.socials.github} target="_blank" rel="noopener noreferrer"
-                                            className="flex items-center gap-2 px-4 py-2 rounded-xl border-2 border-slate-200 hover:border-black hover:shadow-md transition-all bg-white group">
-                                            <span className="text-sm font-bold text-slate-700 group-hover:text-black">GitHub</span>
+                                            className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-slate-200 hover:border-black hover:shadow-sm transition-all bg-white group">
+                                            <span className="text-xs font-bold text-slate-700 group-hover:text-black">GitHub</span>
                                         </a>
                                     )}
                                     {profile.socials?.linkedin && (
                                         <a href={profile.socials.linkedin} target="_blank" rel="noopener noreferrer"
-                                            className="flex items-center gap-2 px-4 py-2 rounded-xl border-2 border-slate-200 hover:border-[#0077b5] hover:shadow-md transition-all bg-white group">
-                                            <span className="text-sm font-bold text-slate-700 group-hover:text-[#0077b5]">LinkedIn</span>
+                                            className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-slate-200 hover:border-[#0077b5] hover:shadow-sm transition-all bg-white group">
+                                            <span className="text-xs font-bold text-slate-700 group-hover:text-[#0077b5]">LinkedIn</span>
                                         </a>
                                     )}
                                     {profile.socials?.twitter && (
                                         <a href={profile.socials.twitter} target="_blank" rel="noopener noreferrer"
-                                            className="flex items-center gap-2 px-4 py-2 rounded-xl border-2 border-slate-200 hover:border-[#1DA1F2] hover:shadow-md transition-all bg-white group">
-                                            <span className="text-sm font-bold text-slate-700 group-hover:text-[#1DA1F2]">Twitter</span>
+                                            className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-slate-200 hover:border-[#1DA1F2] hover:shadow-sm transition-all bg-white group">
+                                            <span className="text-xs font-bold text-slate-700 group-hover:text-[#1DA1F2]">Twitter</span>
                                         </a>
                                     )}
                                     {profile.socials?.instagram && (
                                         <a href={profile.socials.instagram} target="_blank" rel="noopener noreferrer"
-                                            className="flex items-center gap-2 px-4 py-2 rounded-xl border-2 border-slate-200 hover:border-[#E1306C] hover:shadow-md transition-all bg-white group">
-                                            <span className="text-sm font-bold text-slate-700 group-hover:text-[#E1306C]">Instagram</span>
+                                            className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-slate-200 hover:border-[#E1306C] hover:shadow-sm transition-all bg-white group">
+                                            <span className="text-xs font-bold text-slate-700 group-hover:text-[#E1306C]">Instagram</span>
                                         </a>
                                     )}
                                     {profile.socials?.website && (
                                         <a href={profile.socials.website} target="_blank" rel="noopener noreferrer"
-                                            className="flex items-center gap-2 px-4 py-2 rounded-xl border-2 border-slate-200 hover:border-blue-600 hover:shadow-md transition-all bg-white group">
-                                            <span className="text-sm font-bold text-slate-700 group-hover:text-blue-600">Website</span>
+                                            className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-slate-200 hover:border-blue-600 hover:shadow-sm transition-all bg-white group">
+                                            <span className="text-xs font-bold text-slate-700 group-hover:text-blue-600">Website</span>
                                         </a>
                                     )}
 
                                     {!profile.socials?.github && !profile.socials?.linkedin && !profile.socials?.twitter && !profile.socials?.instagram && !profile.socials?.website && (
-                                        <p className="text-sm text-slate-400 italic">No social links added</p>
+                                        <p className="text-xs text-slate-400 italic">No social links added</p>
                                     )}
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
                 {/* Account Actions (Bottom) */}
                 {isOwnProfile && (
-                    <div className="bg-white rounded-2xl shadow-lg border-2 border-black p-6">
-                        <h2 className="text-lg font-semibold text-slate-800 mb-4">Account Actions</h2>
-                        <div className="flex flex-col sm:flex-row gap-4">
+                    <div className="bg-white rounded-xl shadow-md border-2 border-black p-4">
+                        <h2 className="text-base font-bold text-slate-900 mb-3">Account Actions</h2>
+                        <div className="flex flex-col sm:flex-row gap-2">
                             <Link
                                 href="/profile/change-password"
-                                className="px-6 py-2.5 bg-white border-2 border-black rounded-xl text-sm font-bold text-slate-700 hover:bg-slate-50 transition-colors text-center"
+                                className="px-4 py-2 bg-white border border-slate-300 rounded-lg text-xs font-bold text-slate-700 hover:bg-slate-50 transition-colors text-center"
                             >
                                 Change Password
                             </Link>
                             <button
                                 onClick={handleLogout}
-                                className="px-6 py-2.5 bg-red-50 border-2 border-red-200 rounded-xl text-sm font-bold text-red-600 hover:bg-red-100 transition-colors"
+                                className="px-4 py-2 bg-red-50 border border-red-200 rounded-lg text-xs font-bold text-red-600 hover:bg-red-100 transition-colors"
                             >
                                 Logout
                             </button>
                         </div>
                     </div>
                 )}
-
             </main>
 
             {/* User List Modal */}

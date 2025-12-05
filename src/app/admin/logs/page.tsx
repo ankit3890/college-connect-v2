@@ -82,15 +82,15 @@ export default function LogsPage() {
     <div className="min-h-screen bg-slate-100">
       <Navbar />
 
-      <main className="max-w-7xl mx-auto px-4 py-12">
+      <main className="max-w-7xl mx-auto px-4 py-4">
         {/* Header */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-4">
           <h1 className="text-3xl font-bold text-slate-900 mb-2">System Logs</h1>
           <p className="text-slate-600">Monitor system activity and user interactions</p>
         </div>
 
         {/* Main Tabs */}
-        <div className="flex justify-center mb-8">
+        <div className="flex justify-center mb-4">
           <div className="bg-white p-1 rounded-xl shadow-sm border border-slate-200 inline-flex">
             <button
               onClick={() => setActiveTab("system")}

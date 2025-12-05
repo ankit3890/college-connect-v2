@@ -64,9 +64,9 @@ export default async function SubjectPage({ params, searchParams }: { params: Pr
     return (
         <>
             <Navbar />
-            <main className="max-w-4xl mx-auto px-4 py-8">
+            <main className="max-w-4xl mx-auto px-4 py-6">
                 {/* Modern Header */}
-                <div className="text-center mb-8">
+                <div className="text-center mb-6">
                     <div className="flex justify-center mb-4">
                         <div className="w-16 h-16 bg-white rounded-2xl shadow-lg flex items-center justify-center">
                             <svg className="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

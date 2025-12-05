@@ -25,10 +25,10 @@ export default function SearchBox({ onResults }: { onResults: (r: any[]) => void
         type="text"
         value={q}
         onChange={e => setQ(e.target.value)}
-        className="flex-1 border px-3 py-2 rounded"
+        className="flex-1 border-2 border-slate-200 px-4 py-3 rounded-xl focus:border-emerald-500 focus:outline-none transition-colors"
         placeholder="Search by Subject Code (e.g., MA101)..."
       />
-      <button type="submit" className="px-3 py-2 bg-slate-900 text-white rounded">Search</button>
+      <button type="submit" className="px-6 py-3 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-colors">Search</button>
     </form>
   );
 }

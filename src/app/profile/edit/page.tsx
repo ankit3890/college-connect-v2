@@ -252,50 +252,48 @@ export default function EditProfilePage() {
     }
 
     return (
-        <div className="min-h-screen bg-slate-100 pb-12">
+        <div className="min-h-screen bg-slate-100 pb-4">
             <Navbar />
 
-            <main className="max-w-4xl mx-auto px-4 py-8">
-                <div className="flex items-center justify-between mb-8">
-                    <h1 className="text-2xl font-bold text-slate-900">Edit Profile</h1>
+            <main className="max-w-4xl mx-auto px-4 py-4">
+                <div className="flex items-center justify-between mb-4">
+                    <h1 className="text-xl font-bold text-slate-900">Edit Profile</h1>
                     <button
                         onClick={() => router.push(`/u/${profile?.username}`)}
-                        className="text-sm font-bold text-blue-600 hover:underline"
+                        className="text-xs font-bold text-blue-600 hover:underline"
                     >
                         View Public Profile
                     </button>
                 </div>
 
                 {message && (
-                    <div className={`mb-6 p-4 rounded-xl border-2 ${message.type === "success" ? "bg-green-50 text-green-700 border-green-200" : "bg-red-50 text-red-700 border-red-200"}`}>
+                    <div className={`mb-4 p-3 rounded-lg border ${message.type === "success" ? "bg-green-50 text-green-700 border-green-200" : "bg-red-50 text-red-700 border-red-200"}`}>
                         {message.text}
                     </div>
                 )}
 
-
-
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                     {/* LEFT COLUMN: Images & Locked Info */}
-                    <div className="space-y-6">
+                    <div className="space-y-4">
                         {/* Banner & Avatar Upload */}
-                        <div className="bg-white rounded-xl shadow-lg border-2 border-black overflow-hidden">
+                        <div className="bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden">
                             <div
-                                className="h-32 bg-slate-100 relative group bg-cover bg-center"
+                                className="h-24 bg-slate-100 relative group bg-cover bg-center"
                                 style={{
                                     backgroundColor: formData.accentColor || "#3b82f6",
                                     backgroundImage: profile?.bannerUrl ? `url(${profile.bannerUrl})` : undefined
                                 }}
                             >
                                 <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity gap-2">
-                                    <div className="absolute top-4 right-4 flex gap-2">
+                                    <div className="absolute top-2 right-2 flex gap-2">
                                         <label className="cursor-pointer">
-                                            <span className="text-white text-xs font-bold bg-black/50 px-3 py-1.5 rounded-lg border border-white/20 backdrop-blur-sm hover:bg-black/70 transition-colors">Change</span>
+                                            <span className="text-white text-[10px] font-bold bg-black/50 px-2 py-1 rounded border border-white/20 backdrop-blur-sm hover:bg-black/70 transition-colors">Change</span>
                                             <input type="file" className="hidden" accept="image/*" onChange={(e) => e.target.files?.[0] && handleFileUpload("banner", e.target.files[0])} />
                                         </label>
                                         {profile?.bannerUrl && (
                                             <button
                                                 onClick={() => handleRemoveFile("banner")}
-                                                className="text-white text-xs font-bold bg-red-600/80 px-3 py-1.5 rounded-lg border border-white/20 backdrop-blur-sm hover:bg-red-700 transition-colors"
+                                                className="text-white text-[10px] font-bold bg-red-600/80 px-2 py-1 rounded border border-white/20 backdrop-blur-sm hover:bg-red-700 transition-colors"
                                             >
                                                 Remove
                                             </button>
@@ -305,12 +303,12 @@ export default function EditProfilePage() {
                             </div>
 
                             <div className="px-4 pb-4 relative">
-                                <div className="absolute -top-12 left-4 w-24 h-24 rounded-full border-4 border-white bg-white shadow-sm overflow-hidden group z-10">
+                                <div className="absolute -top-10 left-4 w-20 h-20 rounded-full border-4 border-white bg-white shadow-sm overflow-hidden group z-10">
                                     {profile?.avatarUrl ? (
                                         <img src={profile.avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
                                     ) : (
                                         <div
-                                            className="w-full h-full flex items-center justify-center text-white text-3xl font-bold"
+                                            className="w-full h-full flex items-center justify-center text-white text-2xl font-bold"
                                             style={{ backgroundColor: formData.accentColor || "#3b82f6" }}
                                         >
                                             {(profile?.displayName || profile?.name || "?").charAt(0).toUpperCase()}
@@ -332,53 +330,53 @@ export default function EditProfilePage() {
                                     </div>
                                 </div>
                                 <br></br>
-                                <div className="mt-16">
-                                    <p className="text-lg font-bold text-slate-900 break-words">{profile?.name}</p>
-                                    <p className="text-sm text-slate-500 break-all">@{profile?.username}</p>
+                                <div className="mt-12">
+                                    <p className="text-base font-bold text-slate-900 break-words">{profile?.name}</p>
+                                    <p className="text-xs text-slate-500 break-all">@{profile?.username}</p>
                                 </div>
                             </div>
                         </div>
 
                         {/* College Details (Locked) */}
-                        <div className="bg-white rounded-xl shadow-lg border-2 border-black p-5">
-                            <div className="flex items-center gap-2 mb-4 text-slate-800 font-bold border-b border-slate-100 pb-2">
+                        <div className="bg-white rounded-xl shadow-md border border-slate-200 p-4">
+                            <div className="flex items-center gap-2 mb-3 text-slate-800 font-bold border-b border-slate-100 pb-2">
                                 <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-                                <h3 className="text-sm">College Details (Locked)</h3>
+                                <h3 className="text-xs">College Details (Locked)</h3>
                             </div>
-                            <div className="space-y-3 text-sm">
+                            <div className="space-y-2 text-xs">
                                 <div>
-                                    <label className="block text-xs text-slate-500 mb-1 font-bold">Official Name</label>
-                                    <div className="bg-slate-50 px-3 py-2 rounded border border-slate-200 text-slate-500 cursor-not-allowed select-none">{profile?.name}</div>
+                                    <label className="block text-[10px] text-slate-500 mb-0.5 font-bold">Official Name</label>
+                                    <div className="bg-slate-50 px-2 py-1.5 rounded border border-slate-200 text-slate-500 cursor-not-allowed select-none">{profile?.name}</div>
                                 </div>
-                                <div className="border-b border-slate-300 my-2"></div>
+                                <div className="border-b border-slate-100 my-1.5"></div>
                                 <div>
-                                    <label className="block text-xs text-slate-500 mb-1 font-bold">CyberVidya ID</label>
-                                    <div className="bg-slate-50 px-3 py-2 rounded border border-slate-200 text-slate-500 cursor-not-allowed select-none font-mono">{profile?.studentId || "N/A"}</div>
+                                    <label className="block text-[10px] text-slate-500 mb-0.5 font-bold">CyberVidya ID</label>
+                                    <div className="bg-slate-50 px-2 py-1.5 rounded border border-slate-200 text-slate-500 cursor-not-allowed select-none font-mono">{profile?.studentId || "N/A"}</div>
                                 </div>
-                                <div className="border-b border-slate-300 my-2"></div>
+                                <div className="border-b border-slate-100 my-1.5"></div>
                                 <div>
-                                    <label className="block text-xs text-slate-500 mb-1 font-bold">College Email</label>
-                                    <div className="bg-slate-50 px-3 py-2 rounded border border-slate-200 text-slate-500 cursor-not-allowed select-none break-all">{profile?.email || "N/A"}</div>
+                                    <label className="block text-[10px] text-slate-500 mb-0.5 font-bold">College Email</label>
+                                    <div className="bg-slate-50 px-2 py-1.5 rounded border border-slate-200 text-slate-500 cursor-not-allowed select-none break-all">{profile?.email || "N/A"}</div>
                                 </div>
-                                <div className="border-b border-slate-300 my-2"></div>
+                                <div className="border-b border-slate-100 my-1.5"></div>
                                 <div>
-                                    <label className="block text-xs text-slate-500 mb-1 font-bold">Branch</label>
-                                    <div className="bg-slate-50 px-3 py-2 rounded border border-slate-200 text-slate-500 cursor-not-allowed select-none">{profile?.branch}</div>
+                                    <label className="block text-[10px] text-slate-500 mb-0.5 font-bold">Branch</label>
+                                    <div className="bg-slate-50 px-2 py-1.5 rounded border border-slate-200 text-slate-500 cursor-not-allowed select-none">{profile?.branch}</div>
                                 </div>
-                                <div className="border-b border-slate-300 my-2"></div>
+                                <div className="border-b border-slate-100 my-1.5"></div>
                                 <div>
-                                    <label className="block text-xs text-slate-500 mb-1 font-bold">Year</label>
-                                    <div className="bg-slate-50 px-3 py-2 rounded border border-slate-200 text-slate-500 cursor-not-allowed select-none">{profile?.year}</div>
+                                    <label className="block text-[10px] text-slate-500 mb-0.5 font-bold">Year</label>
+                                    <div className="bg-slate-50 px-2 py-1.5 rounded border border-slate-200 text-slate-500 cursor-not-allowed select-none">{profile?.year}</div>
                                 </div>
 
                                 {/* Sync Button */}
-                                <div className="pt-4">
+                                <div className="pt-3">
                                     <button
                                         type="button"
                                         onClick={() => setShowSyncModal(true)}
-                                        className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-blue-50 border-2 border-blue-200 text-blue-700 rounded-lg text-xs font-bold hover:bg-blue-100 transition-colors"
+                                        className="w-full flex items-center justify-center gap-2 px-3 py-1.5 bg-blue-50 border border-blue-200 text-blue-700 rounded-lg text-[10px] font-bold hover:bg-blue-100 transition-colors"
                                     >
-                                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
                                         Sync with CyberVidya
                                     </button>
                                     <p className="text-[10px] text-slate-400 text-center mt-1">
@@ -389,55 +387,47 @@ export default function EditProfilePage() {
                                 </div>
                             </div>
                         </div>
-
-                        {/* Account Actions Removed - Moved to Public Profile */}
-
-
-
-
                     </div>
 
                     {/* RIGHT COLUMN: Edit Form */}
-                    < div className="lg:col-span-2" >
-                        <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-lg border-2 border-black p-6 space-y-6">
+                    <div className="lg:col-span-2">
+                        <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-md border border-slate-200 p-4 space-y-4">
                             {/* Basic Info */}
                             <div>
-                                <h3 className="text-lg font-bold text-slate-800 mb-4">Basic Info</h3>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    {/* Display Name REMOVED as per request */}
-
+                                <h3 className="text-base font-bold text-slate-800 mb-3">Basic Info</h3>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                     <div className="md:col-span-2">
-                                        <label className="block text-sm font-bold text-slate-700 mb-1">Username</label>
+                                        <label className="block text-xs font-bold text-slate-700 mb-1">Username</label>
                                         <input
                                             type="text"
                                             value={formData.username}
                                             onChange={(e) => setFormData({ ...formData, username: e.target.value })}
                                             readOnly={!!profile?.username}
-                                            className={`w-full px-3 py-2 border-2 rounded-lg focus:outline-none ${profile?.username ? "bg-slate-50 border-slate-200 text-slate-500 cursor-not-allowed" : "bg-white border-slate-300 text-slate-900 focus:border-black"}`}
+                                            className={`w-full px-3 py-1.5 border rounded-lg text-sm focus:outline-none ${profile?.username ? "bg-slate-50 border-slate-200 text-slate-500 cursor-not-allowed" : "bg-white border-slate-300 text-slate-900 focus:border-black"}`}
                                             placeholder="Choose a unique username"
                                         />
-                                        <p className="text-xs text-slate-400 mt-1">
+                                        <p className="text-[10px] text-slate-400 mt-0.5">
                                             {profile?.username ? "Username cannot be changed." : "Choose wisely! You can only set this once."}
                                         </p>
                                     </div>
                                     <div className="md:col-span-2">
-                                        <label className="block text-sm font-bold text-slate-700 mb-1">Status Text</label>
+                                        <label className="block text-xs font-bold text-slate-700 mb-1">Status Text</label>
                                         <input
                                             type="text"
                                             value={formData.statusText}
                                             onChange={(e) => setFormData({ ...formData, statusText: e.target.value })}
-                                            className="w-full px-3 py-2 border-2 border-slate-300 rounded-lg focus:border-black focus:outline-none"
+                                            className="w-full px-3 py-1.5 border border-slate-300 rounded-lg text-sm focus:border-black focus:outline-none"
                                             placeholder="What's on your mind?"
                                             maxLength={80}
                                         />
                                     </div>
                                     <div className="md:col-span-2">
-                                        <label className="block text-sm font-bold text-slate-700 mb-1">Bio</label>
+                                        <label className="block text-xs font-bold text-slate-700 mb-1">Bio</label>
                                         <textarea
                                             value={formData.bio}
                                             onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
                                             rows={3}
-                                            className="w-full px-3 py-2 border-2 border-slate-300 rounded-lg focus:border-black focus:outline-none"
+                                            className="w-full px-3 py-1.5 border border-slate-300 rounded-lg text-sm focus:border-black focus:outline-none"
                                             placeholder="Tell us about yourself..."
                                             maxLength={280}
                                         />
@@ -445,167 +435,165 @@ export default function EditProfilePage() {
                                 </div>
                             </div>
 
-                            <hr className="border-slate-200" />
+                            <hr className="border-slate-100" />
 
                             {/* Contact & Socials */}
                             <div>
-                                <h3 className="text-lg font-bold text-slate-800 mb-4">Contact & Socials</h3>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <h3 className="text-base font-bold text-slate-800 mb-3">Contact & Socials</h3>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                     <div>
-                                        <label className="block text-sm font-bold text-slate-700 mb-1">Mobile Number</label>
+                                        <label className="block text-xs font-bold text-slate-700 mb-1">Mobile Number</label>
                                         <input
                                             type="text"
                                             value={formData.mobileNumber}
                                             onChange={(e) => setFormData({ ...formData, mobileNumber: e.target.value })}
-                                            className="w-full px-3 py-2 border-2 border-slate-300 rounded-lg focus:border-black focus:outline-none"
+                                            className="w-full px-3 py-1.5 border border-slate-300 rounded-lg text-sm focus:border-black focus:outline-none"
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-bold text-slate-700 mb-1">Website</label>
+                                        <label className="block text-xs font-bold text-slate-700 mb-1">Website</label>
                                         <input
                                             type="url"
                                             value={formData.website}
                                             onChange={(e) => setFormData({ ...formData, website: e.target.value })}
-                                            className="w-full px-3 py-2 border-2 border-slate-300 rounded-lg focus:border-black focus:outline-none"
+                                            className="w-full px-3 py-1.5 border border-slate-300 rounded-lg text-sm focus:border-black focus:outline-none"
                                             placeholder="https://"
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-bold text-slate-700 mb-1">GitHub</label>
+                                        <label className="block text-xs font-bold text-slate-700 mb-1">GitHub</label>
                                         <input
                                             type="url"
                                             value={formData.github}
                                             onChange={(e) => setFormData({ ...formData, github: e.target.value })}
-                                            className="w-full px-3 py-2 border-2 border-slate-300 rounded-lg focus:border-black focus:outline-none"
+                                            className="w-full px-3 py-1.5 border border-slate-300 rounded-lg text-sm focus:border-black focus:outline-none"
                                             placeholder="GitHub Profile URL"
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-bold text-slate-700 mb-1">LinkedIn</label>
+                                        <label className="block text-xs font-bold text-slate-700 mb-1">LinkedIn</label>
                                         <input
                                             type="url"
                                             value={formData.linkedin}
                                             onChange={(e) => setFormData({ ...formData, linkedin: e.target.value })}
-                                            className="w-full px-3 py-2 border-2 border-slate-300 rounded-lg focus:border-black focus:outline-none"
+                                            className="w-full px-3 py-1.5 border border-slate-300 rounded-lg text-sm focus:border-black focus:outline-none"
                                             placeholder="LinkedIn Profile URL"
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-bold text-slate-700 mb-1">Twitter (X)</label>
+                                        <label className="block text-xs font-bold text-slate-700 mb-1">Twitter (X)</label>
                                         <input
                                             type="url"
                                             value={formData.twitter}
                                             onChange={(e) => setFormData({ ...formData, twitter: e.target.value })}
-                                            className="w-full px-3 py-2 border-2 border-slate-300 rounded-lg focus:border-black focus:outline-none"
+                                            className="w-full px-3 py-1.5 border border-slate-300 rounded-lg text-sm focus:border-black focus:outline-none"
                                             placeholder="Twitter Profile URL"
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-bold text-slate-700 mb-1">Instagram</label>
+                                        <label className="block text-xs font-bold text-slate-700 mb-1">Instagram</label>
                                         <input
                                             type="url"
                                             value={formData.instagram}
                                             onChange={(e) => setFormData({ ...formData, instagram: e.target.value })}
-                                            className="w-full px-3 py-2 border-2 border-slate-300 rounded-lg focus:border-black focus:outline-none"
+                                            className="w-full px-3 py-1.5 border border-slate-300 rounded-lg text-sm focus:border-black focus:outline-none"
                                             placeholder="Instagram Profile URL"
                                         />
                                     </div>
                                 </div>
                             </div>
 
-                            <hr className="border-slate-200" />
+                            <hr className="border-slate-100" />
 
                             {/* Interests & Skills */}
                             <div>
-                                <h3 className="text-lg font-bold text-slate-800 mb-4">Interests & Skills</h3>
-                                <div className="space-y-4">
+                                <h3 className="text-base font-bold text-slate-800 mb-3">Interests & Skills</h3>
+                                <div className="space-y-3">
                                     <div>
-                                        <label className="block text-sm font-bold text-slate-700 mb-1">Interests (comma separated)</label>
+                                        <label className="block text-xs font-bold text-slate-700 mb-1">Interests (comma separated)</label>
                                         <input
                                             type="text"
                                             value={formData.interests}
                                             onChange={(e) => setFormData({ ...formData, interests: e.target.value })}
-                                            className="w-full px-3 py-2 border-2 border-slate-300 rounded-lg focus:border-black focus:outline-none"
+                                            className="w-full px-3 py-1.5 border border-slate-300 rounded-lg text-sm focus:border-black focus:outline-none"
                                             placeholder="Coding, Music, Travel..."
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-bold text-slate-700 mb-1">Skills (comma separated)</label>
+                                        <label className="block text-xs font-bold text-slate-700 mb-1">Skills (comma separated)</label>
                                         <input
                                             type="text"
                                             value={formData.skills}
                                             onChange={(e) => setFormData({ ...formData, skills: e.target.value })}
-                                            className="w-full px-3 py-2 border-2 border-slate-300 rounded-lg focus:border-black focus:outline-none"
+                                            className="w-full px-3 py-1.5 border border-slate-300 rounded-lg text-sm focus:border-black focus:outline-none"
                                             placeholder="React, Node.js, Python..."
                                         />
                                     </div>
                                 </div>
                             </div>
 
-                            <hr className="border-slate-200" />
+                            <hr className="border-slate-100" />
 
                             {/* Appearance & Privacy */}
                             <div>
-                                <h3 className="text-lg font-bold text-slate-800 mb-4">Appearance & Privacy</h3>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <h3 className="text-base font-bold text-slate-800 mb-3">Appearance & Privacy</h3>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
-                                        <label className="block text-sm font-bold text-slate-700 mb-2">Accent Color</label>
-                                        <div className="flex gap-2">
+                                        <label className="block text-xs font-bold text-slate-700 mb-1.5">Accent Color</label>
+                                        <div className="flex gap-1.5">
                                             {["#3b82f6", "#ef4444", "#10b981", "#f59e0b", "#8b5cf6", "#ec4899", "#6366f1"].map((color) => (
                                                 <button
                                                     key={color}
                                                     type="button"
                                                     onClick={() => setFormData({ ...formData, accentColor: color })}
-                                                    className={`w-8 h-8 rounded-full border-2 ${formData.accentColor === color ? "border-slate-900 scale-110" : "border-transparent"}`}
+                                                    className={`w-6 h-6 rounded-full border-2 ${formData.accentColor === color ? "border-slate-900 scale-110" : "border-transparent"}`}
                                                     style={{ backgroundColor: color }}
                                                 />
                                             ))}
                                         </div>
                                     </div>
 
-                                    <div className="space-y-3">
-                                        <label className="flex items-center gap-3 cursor-pointer">
+                                    <div className="space-y-2">
+                                        <label className="flex items-center gap-2 cursor-pointer">
                                             <input
                                                 type="checkbox"
                                                 checked={formData.isPublicProfile}
                                                 onChange={(e) => setFormData({ ...formData, isPublicProfile: e.target.checked })}
-                                                className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+                                                className="w-3.5 h-3.5 text-blue-600 rounded focus:ring-blue-500"
                                             />
-                                            <span className="text-sm font-bold text-slate-700">Make Profile Public</span>
+                                            <span className="text-xs font-bold text-slate-700">Make Profile Public</span>
                                         </label>
-                                        <label className="flex items-center gap-3 cursor-pointer">
+                                        <label className="flex items-center gap-2 cursor-pointer">
                                             <input
                                                 type="checkbox"
                                                 checked={formData.showBranchYear}
                                                 onChange={(e) => setFormData({ ...formData, showBranchYear: e.target.checked })}
-                                                className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+                                                className="w-3.5 h-3.5 text-blue-600 rounded focus:ring-blue-500"
                                             />
-                                            <span className="text-sm font-bold text-slate-700">Show Branch & Year</span>
+                                            <span className="text-xs font-bold text-slate-700">Show Branch & Year</span>
                                         </label>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="pt-4 flex justify-end gap-3">
+                            <div className="pt-2 flex justify-end gap-2">
                                 <button
                                     type="button"
                                     onClick={() => router.back()}
-                                    className="px-6 py-2 border-2 border-slate-300 rounded-lg text-slate-700 font-bold hover:bg-slate-50"
+                                    className="px-4 py-1.5 border border-slate-300 rounded-lg text-slate-700 text-sm font-bold hover:bg-slate-50"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={saving}
-                                    className="px-6 py-2 bg-black text-white border-2 border-black rounded-lg font-bold hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="px-4 py-1.5 bg-black text-white border border-black rounded-lg text-sm font-bold hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     {saving ? "Saving..." : "Save Changes"}
                                 </button>
                             </div>
 
                         </form>
-
-
                     </div>
                 </div>
 

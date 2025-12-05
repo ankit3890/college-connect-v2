@@ -29,9 +29,9 @@ export default function SyllabusSearchPage() {
         <div className="min-h-screen bg-slate-100">
             <Navbar />
 
-            <main className="max-w-5xl mx-auto px-4 py-12">
+            <main className="max-w-5xl mx-auto px-4 py-6">
                 {/* Header */}
-                <div className="text-center mb-12">
+                <div className="text-center mb-6">
                     <div className="flex justify-center mb-4">
                         <div className="w-16 h-16 bg-white rounded-2xl shadow-lg flex items-center justify-center">
                             <svg className="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -46,7 +46,7 @@ export default function SyllabusSearchPage() {
                 </div>
 
                 {/* Search Card */}
-                <div className="bg-white rounded-2xl shadow-lg px-8 py-8 mb-8 border-2 border-black">
+                <div className="bg-white rounded-2xl shadow-lg p-4 mb-4 border-2 border-black">
                     <SearchBox
                         onResults={(r) => {
                             setResults(r);
@@ -116,7 +116,7 @@ export default function SyllabusSearchPage() {
 
                 {/* Empty State */}
                 {results.length === 0 && !searching && (
-                    <div className="bg-white rounded-2xl shadow-lg px-8 py-12 text-center border-2 border-black">
+                    <div className="bg-white rounded-2xl shadow-lg p-6 text-center border-2 border-black">
                         <div className="flex justify-center mb-4">
                             <svg className="w-16 h-16 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
