@@ -29,6 +29,14 @@ export default function DashboardPage() {
     fetchUser();
   }, []);
 
+  // Debug: Log user data to see what we have
+  useEffect(() => {
+    if (user) {
+      console.log('Dashboard user data:', user);
+      console.log('Profile link will be:', `/u/${user.username || user.studentId}`);
+    }
+  }, [user]);
+
   const logActivity = async (action: string, details: string) => {
     try {
       await fetch("/api/log/activity", {

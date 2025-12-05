@@ -50,6 +50,14 @@ export default function HomePage() {
     checkAuth();
   }, []);
 
+  // Debug: Log user data to see what we have
+  useEffect(() => {
+    if (user) {
+      console.log('Welcome page user data:', user);
+      console.log('Profile link will be:', `/u/${user.username || user.studentId}`);
+    }
+  }, [user]);
+
   return (
     <div className="min-h-screen bg-slate-100 dark:bg-slate-900 transition-colors duration-300">
       <Navbar />
