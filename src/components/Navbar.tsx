@@ -170,6 +170,10 @@ export default function Navbar() {
                   Profile
                 </Link>
 
+                <Link href="/community" className={linkClass("/community")}>
+                  Community
+                </Link>
+
                 {isAdmin && (
                   <>
                     <Link href="/admin" className={linkClass("/admin")}>
@@ -243,6 +247,14 @@ export default function Navbar() {
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Profile
+                </Link>
+
+                <Link
+                  href="/community"
+                  className={linkClass("/community", true)}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Community
                 </Link>
 
                 {isAdmin && (
