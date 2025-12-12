@@ -1,6 +1,6 @@
 import { spawn, ChildProcess } from "child_process";
 import puppeteer from "puppeteer-extra";
-import StealthPlugin from "puppeteer-extra-plugin-stealth";
+// import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { Browser, Page } from "puppeteer";
 
 // puppeteer.use(StealthPlugin());
@@ -29,6 +29,7 @@ async function startPuppeteerBrowser(): Promise<Browser> {
       "--disable-gpu",
       "--disable-dev-shm-usage",
       "--remote-debugging-port=9222",
+      "--display=:99",
       "--window-size=1280,1400"
     ],
     defaultViewport: { width: 1280, height: 1400 }
@@ -91,7 +92,12 @@ export async function startSession({ ownerId, loginUrl }: { ownerId: string; log
   // navigate to login page so user can interact
   const targetUrl = loginUrl || process.env.CYBER_LOGIN_URL || "https://google.com";
   console.log(`[Remote] Navigating to ${targetUrl}`);
-  await page.goto(targetUrl, { waitUntil: "domcontentloaded" });
+  try {
+    await page.goto(targetUrl, { waitUntil: "domcontentloaded", timeout: 60000 });
+  } catch (err: any) {
+    console.error(`[Remote] Warning: Navigation to ${targetUrl} failed or timed out:`, err.message);
+    // Continue anyway - user can interact manually
+  }
 
   // ensure devtools remote port listening
   console.log("[Remote] Waiting for port 9222...");

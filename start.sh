@@ -8,7 +8,7 @@ Xvfb :99 -screen 0 1280x1400x24 &
 export DISPLAY=:99
 
 # short wait to ensure Xvfb is ready
-sleep 0.5
+sleep 1
 
 # debug info
 echo "Start script: DISPLAY=$DISPLAY, PUPPETEER_EXECUTABLE_PATH=${PUPPETEER_EXECUTABLE_PATH:-/usr/bin/google-chrome-stable}"
