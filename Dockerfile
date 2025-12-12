@@ -1,89 +1,127 @@
-FROM node:20-slim AS base
-
-# Install dependencies only when needed
-FROM base AS deps
+# Dockerfile — multi-stage for Next.js (standalone) + Puppeteer-compatible Chrome
+# Base image
+FROM node:20-bullseye AS base
+ENV NODE_ENV=production
 WORKDIR /app
 
-# Install Python and build tools for native modules (better-sqlite3)
-RUN apt-get update && apt-get install -y \
+# -----------------------
+# deps stage
+# -----------------------
+FROM base AS deps
+# install build tools for native modules
+RUN apt-get update && apt-get install -y --no-install-recommends \
   python3 \
   make \
   g++ \
-  --no-install-recommends \
+  ca-certificates \
+  gnupg \
+  wget \
+  unzip \
+  procps \
   && rm -rf /var/lib/apt/lists/*
 
-# Install dependencies based on the preferred package manager
-# Only copy package.json to avoid platform-specific lock conflicts
-COPY package.json ./
-RUN npm install --production=false && \
-  npm rebuild better-sqlite3 lightningcss --build-from-source
+# copy package files only so Linux installs create linux-native node_modules
+COPY package.json package-lock.json* ./
+# use npm ci for reproducible install
+RUN npm ci
 
-# Rebuild the source code only when needed
+# Rebuild native modules (force compile-on-linux)
+RUN npm rebuild --build-from-source better-sqlite3 lightningcss || true
+
+# -----------------------
+# builder stage
+# -----------------------
 FROM base AS builder
 WORKDIR /app
 
-# Install Python and build tools for native module rebuild during build
-RUN apt-get update && apt-get install -y \
+# install build tools again for compile in builder stage
+RUN apt-get update && apt-get install -y --no-install-recommends \
   python3 \
   make \
   g++ \
-  --no-install-recommends \
+  ca-certificates \
   && rm -rf /var/lib/apt/lists/*
 
+# copy node_modules from deps (linux-built)
 COPY --from=deps /app/node_modules ./node_modules
+# copy source
 COPY . .
 
-# Next.js collects completely anonymous telemetry data about general usage.
-# Learn more here: https://nextjs.org/telemetry
-# Uncomment the following line in case you want to disable telemetry during the build.
-ENV NEXT_TELEMETRY_DISABLED 1
+# disable Next telemetry during build
+ENV NEXT_TELEMETRY_DISABLED=1
 
-# Rebuild native modules in builder stage before building Next.js
-RUN npm rebuild better-sqlite3 lightningcss --build-from-source
+# Ensure native modules rebuilt in builder
+RUN npm rebuild --build-from-source better-sqlite3 lightningcss || true
 
+# Build Next.js app
 RUN npm run build
 
-# Production image, copy all the files and run next
-FROM base AS runner
+# -----------------------
+# runner stage
+# -----------------------
+FROM node:20-bullseye AS runner
 WORKDIR /app
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+# Prevent Puppeteer from attempting to download Chromium (we'll use system chrome)
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable
 
-ENV NODE_ENV production
-# Uncomment the following line in case you want to disable telemetry during runtime.
-ENV NEXT_TELEMETRY_DISABLED 1
-
-# Install Google Chrome Stable and fonts
-# Note: this installs the necessary libs to make the bundled version of Chromium that Puppeteer
-# installs, work.
-RUN apt-get update \
-  && apt-get install -y wget gnupg \
-  && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
-  && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' \
-  && apt-get update \
-  && apt-get install -y google-chrome-stable fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-freefont-ttf libxss1 \
-  --no-install-recommends \
+# Install Google Chrome stable + required libs/fonts for rendering
+RUN apt-get update && apt-get install -y --no-install-recommends \
+  wget \
+  gnupg \
+  ca-certificates \
+  fonts-ipafont-gothic \
+  fonts-wqy-zenhei \
+  fonts-thai-tlwg \
+  fonts-kacst \
+  fonts-freefont-ttf \
+  libxss1 \
+  libasound2 \
+  libatk-bridge2.0-0 \
+  libatk1.0-0 \
+  libcups2 \
+  libdrm2 \
+  libgbm1 \
+  libgtk-3-0 \
+  libnspr4 \
+  libnss3 \
+  libxcomposite1 \
+  libxdamage1 \
+  libxrandr2 \
+  libxkbcommon0 \
+  libxshmfence1 \
+  libx11-xcb1 \
+  libxcb1 \
+  libxext6 \
+  libxrender1 \
+  xdg-utils \
   && rm -rf /var/lib/apt/lists/*
 
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+# install google-chrome-stable
+RUN wget -q -O /tmp/google-chrome.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
+  && apt-get update \
+  && apt-get install -y --no-install-recommends /tmp/google-chrome.deb \
+  && rm -f /tmp/google-chrome.deb
 
+# Create non-root user to run the app
+RUN addgroup --system --gid 1001 nodejs \
+  && adduser --system --uid 1001 nextjs
+
+# copy only the standalone output from the builder (Next.js standalone)
+# this assumes you used `next build` and `next export` to create .next/standalone
 COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
 
-# Set the correct permission for prerender cache
-RUN mkdir .next
-RUN chown nextjs:nodejs .next
-
-# Automatically leverage output traces to reduce image size
-# https://nextjs.org/docs/advanced-features/output-file-tracing
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+# Ensure directory ownership for prerender cache and .next files
+RUN mkdir -p /app/.next && chown -R nextjs:nodejs /app/.next /app/public /app/.next/static
 
 USER nextjs
 
 EXPOSE 3000
+ENV PORT=3000
 
-ENV PORT 3000
-# Tell Puppeteer to skip installing Chrome. We'll be using the installed package.
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
-ENV PUPPETEER_EXECUTABLE_PATH /usr/bin/google-chrome-stable
-
+# Run the standalone server (Next.js creates server.js inside standalone)
 CMD ["node", "server.js"]
