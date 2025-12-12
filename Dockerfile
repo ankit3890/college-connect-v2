@@ -1,8 +1,16 @@
-FROM node:18-slim AS base
+FROM node:20-slim AS base
 
 # Install dependencies only when needed
 FROM base AS deps
 WORKDIR /app
+
+# Install Python and build tools for native modules (better-sqlite3)
+RUN apt-get update && apt-get install -y \
+  python3 \
+  make \
+  g++ \
+  --no-install-recommends \
+  && rm -rf /var/lib/apt/lists/*
 
 # Install dependencies based on the preferred package manager
 # Only copy package.json to avoid platform-specific lock conflicts
