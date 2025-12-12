@@ -15,7 +15,8 @@ RUN apt-get update && apt-get install -y \
 # Install dependencies based on the preferred package manager
 # Only copy package.json to avoid platform-specific lock conflicts
 COPY package.json ./
-RUN npm install --production=false
+RUN npm install --production=false && \
+  npm rebuild better-sqlite3 lightningcss --build-from-source
 
 # Rebuild the source code only when needed
 FROM base AS builder
