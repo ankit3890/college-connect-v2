@@ -94,7 +94,8 @@ export async function initSession(): Promise<{ sessionId: string; screenshot: st
      await page.setViewport({ width: 1280, height: 800 });
 
      console.log(">> [Puppeteer] Navigating to CyberVidya...");
-     await page.goto("https://kiet.cybervidya.net/", { waitUntil: "domcontentloaded", timeout: 30000 });
+     // Increased timeout to 60s for slow backend cold starts
+     await page.goto("https://kiet.cybervidya.net/", { waitUntil: "domcontentloaded", timeout: 60000 });
      
      // Inject CSS to zoom out (Fix layout issues)
      await page.addStyleTag({ content: "body { zoom: 75%; }" });
