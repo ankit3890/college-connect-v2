@@ -1,5 +1,10 @@
 import { spawn, ChildProcess } from "child_process";
-import puppeteer, { Browser, Page } from "puppeteer";
+import { spawn, ChildProcess } from "child_process";
+import puppeteer from "puppeteer-extra";
+import StealthPlugin from "puppeteer-extra-plugin-stealth";
+import { Browser, Page } from "puppeteer";
+
+puppeteer.use(StealthPlugin());
 // @ts-ignore
 import waitPort from "wait-port";
 
@@ -25,9 +30,9 @@ async function startPuppeteerBrowser(): Promise<Browser> {
       "--disable-gpu",
       "--disable-dev-shm-usage",
       "--remote-debugging-port=9222",
-      "--window-size=1280,720"
+      "--window-size=1920,1080"
     ],
-    defaultViewport: { width: 1280, height: 720 }
+    defaultViewport: { width: 1920, height: 1080 }
   });
   return browser;
 }
