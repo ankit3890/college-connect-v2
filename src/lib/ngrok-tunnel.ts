@@ -1,4 +1,10 @@
-import ngrok from '@ngrok/ngrok';
+// Conditional ngrok import - will be undefined if platform-specific binary fails
+let ngrok: any = null;
+try {
+  ngrok = require('@ngrok/ngrok');
+} catch (error) {
+  console.warn('[Ngrok] Platform-specific binary not available. Ngrok features disabled.');
+}
 
 interface TunnelSession {
   url: string;
@@ -19,6 +25,21 @@ if (!globalThis.ngrokTunnel) {
  * Start an ngrok tunnel to the Puppeteer remote debugging port
  */
 export async function startTunnel(sessionId: string): Promise<string> {
+  // Check if ngrok is available
+  if (!ngrok) {
+    console.log('[Ngrok] Not available on this platform. Using localhost URL instead.');
+    const localUrl = 'http://localhost:9222';
+    
+    globalThis.ngrokTunnel = {
+      url: localUrl,
+      sessionId,
+      listener: null,
+      timestamp: Date.now()
+    };
+    
+    return localUrl;
+  }
+
   // Close any existing tunnel
   if (globalThis.ngrokTunnel?.listener) {
     try {
@@ -75,4 +96,11 @@ export async function stopTunnel() {
  */
 export function getTunnelUrl(): string | null {
   return globalThis.ngrokTunnel?.url || null;
+}
+
+/**
+ * Check if ngrok is available on this platform
+ */
+export function isNgrokAvailable(): boolean {
+  return ngrok !== null;
 }
