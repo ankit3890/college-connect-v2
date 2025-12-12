@@ -15,7 +15,7 @@ RUN apt-get update && apt-get install -y \
 # Install dependencies based on the preferred package manager
 # Only copy package.json to avoid platform-specific lock conflicts
 COPY package.json ./
-RUN npm install --omit=optional
+RUN npm install --production=false
 
 # Rebuild the source code only when needed
 FROM base AS builder
