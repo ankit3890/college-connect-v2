@@ -1,7 +1,6 @@
 # Dockerfile — multi-stage for Next.js (standalone) + Puppeteer-compatible Chrome
 # Base image
 FROM node:20-bullseye AS base
-ENV NODE_ENV=production
 WORKDIR /app
 
 # -----------------------
@@ -22,8 +21,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # copy package files only so Linux installs create linux-native node_modules
 COPY package.json package-lock.json* ./
-# use npm ci for reproducible install
-RUN npm ci
+# use npm ci for reproducible install, ensure dev deps (override any global NODE_ENV)
+RUN NODE_ENV=development npm ci
 
 # Rebuild native modules (force compile-on-linux)
 RUN npm rebuild --build-from-source better-sqlite3 lightningcss || true

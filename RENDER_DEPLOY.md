@@ -15,20 +15,23 @@
    - Find and select: `ankit3890/college-connect-v2`
    - Click **"Connect"**
 
-## Step 3: Configure the Service
+## Step 3: Configure the Service (CRITICAL STEP)
 
 ### Basic Settings:
 
-- **Name:** `college-connect` (or whatever you prefer)
-- **Region:** Choose closest to you (e.g., Singapore)
+- **Name:** `college-connect`
+- **Region:** Choose closest to you
 - **Branch:** `main`
-- **Root Directory:** (leave blank)
 
-### Build Settings:
+### ⚠️ Runtime Settings (IMPORTANT):
 
-- **Runtime:** Render will auto-detect **Docker** ✅
-- **Build Command:** (leave empty - uses Dockerfile)
-- **Start Command:** (leave empty - uses Dockerfile CMD)
+Render might default to "Node". You **MUST** change this:
+
+- **Runtime:** Select **Docker** 🐳
+- **Build Command:** (leave empty)
+- **Start Command:** (leave empty)
+
+_If you don't see "Docker" as an option, or it's stuck on Node, it's best to delete the service and create a new one, ensuring you select Docker if asked._
 
 ## Step 4: Add Environment Variables
 
@@ -48,56 +51,21 @@ PORT=3000
 NEXT_PUBLIC_API_URL=https://your-app-name.onrender.com
 ```
 
-## Step 5: Choose Plan
-
-- **Free Tier:** Available but has cold starts (app sleeps after 15 min)
-- **Starter ($7/mo):** No cold starts, always running
-
-## Step 6: Deploy!
+## Step 5: Deploy!
 
 1. Click **"Create Web Service"**
-2. Render will:
-   - Clone your repo
-   - Build using your Dockerfile
-   - Install Chrome, Python, dependencies
-   - Start your app
-3. Watch the logs for progress
-
-## Step 7: Get Your URL
-
-Once deployed, you'll get a URL like:
-
-```
-https://college-connect-xyz.onrender.com
-```
+2. Render will build using your Dockerfile.
+3. This process takes 5-10 minutes.
 
 ## Troubleshooting
 
-### If build fails:
+### "Build failed" with "Cannot find module lightningcss"
 
-- Check the logs for specific errors
-- Ensure all environment variables are set
-- Verify Dockerfile is correct
+- This means you are on **Node Runtime**, not Docker.
+- **Fix:** Go to Settings -> Runtime -> Switch to **Docker**.
+- If you can't switch, create a new service.
 
-### If app crashes:
+### App crashes with 502
 
-- Check Deploy Logs for runtime errors
-- Verify MongoDB URI is correct and allows external connections
-- Check MongoDB Network Access allows Render IPs (0.0.0.0/0)
-
-### Free Tier Limitations:
-
-- App sleeps after 15 minutes of inactivity
-- First request after sleep takes ~30 seconds to wake up
-- Upgrade to Starter ($7/mo) to avoid this
-
-## Success Criteria
-
-✅ Build completes without errors
-✅ App starts and shows "Ready in Xms"
-✅ Can access your URL without 502 errors
-✅ Puppeteer/Chrome works for attendance feature
-
----
-
-**Your Dockerfile is already configured perfectly for Render!** 🚀
+- Check "Deploy Logs" for errors.
+- Ensure all environment variables are set.
