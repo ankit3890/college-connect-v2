@@ -13,16 +13,16 @@ export async function POST(req: NextRequest) {
     const result = await captureToken(sessionId);
     
     if (result.ok && result.token) {
-       // Login success! Clean up resources
-       console.log(`>> [Capture] Token captured for ${sessionId}, cleaning up...`);
-       await cleanupSession(sessionId);
-       
-       return NextResponse.json({
-         loggedIn: true,
-         token: result.token,
-         uid: "admin", // Mock/Default
-         authPref: "token"
-       });
+      // Login success! Clean up resources
+      console.log(`>> [Capture] Token captured for ${sessionId}, cleaning up...`);
+      await cleanupSession(sessionId);
+
+      return NextResponse.json({
+        loggedIn: true,
+        token: result.token,
+        uid: "admin", // Mock/Default
+        authPref: "token"
+      });
     }
 
     // Not logged in yet
