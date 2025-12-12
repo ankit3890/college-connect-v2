@@ -32,7 +32,9 @@ async function startPuppeteerBrowser(): Promise<Browser> {
       "--display=:99",
       "--window-size=1280,1400"
     ],
-    defaultViewport: { width: 1280, height: 1400 }
+    defaultViewport: { width: 1280, height: 1400 },
+    timeout: 60000,
+    dumpio: true
   });
   return browser;
 }
@@ -54,8 +56,8 @@ function startNgrok(port = 9222): Promise<{ proc: ChildProcess; url: string }> {
     let stdout = "";
     const timeout = setTimeout(() => {
       proc.kill();
-      reject(new Error("ngrok did not produce a public URL in time (15s timeout)"));
-    }, 15000);
+      reject(new Error(`ngrok did not produce a public URL in time (45s timeout). Output: ${stdout.slice(0, 500)}`));
+    }, 45000);
 
     proc.stdout.on("data", (d) => {
       stdout += d.toString();
