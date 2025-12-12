@@ -3,7 +3,7 @@ import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { Browser, Page } from "puppeteer";
 
-puppeteer.use(StealthPlugin());
+// puppeteer.use(StealthPlugin());
 // @ts-ignore
 import waitPort from "wait-port";
 
