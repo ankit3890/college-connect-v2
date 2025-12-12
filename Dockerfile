@@ -21,6 +21,15 @@ RUN npm install --production=false && \
 # Rebuild the source code only when needed
 FROM base AS builder
 WORKDIR /app
+
+# Install Python and build tools for native module rebuild during build
+RUN apt-get update && apt-get install -y \
+  python3 \
+  make \
+  g++ \
+  --no-install-recommends \
+  && rm -rf /var/lib/apt/lists/*
+
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
@@ -28,6 +37,9 @@ COPY . .
 # Learn more here: https://nextjs.org/telemetry
 # Uncomment the following line in case you want to disable telemetry during the build.
 ENV NEXT_TELEMETRY_DISABLED 1
+
+# Rebuild native modules in builder stage before building Next.js
+RUN npm rebuild better-sqlite3 lightningcss --build-from-source
 
 RUN npm run build
 
