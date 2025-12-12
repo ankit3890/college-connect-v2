@@ -1,6 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
-import { checkSession } from "@/lib/puppeteer-auth";
-import { stopTunnel } from "@/lib/ngrok-tunnel";
+import { cleanupSession, captureToken } from "@/lib/remote-init";
 
 export async function POST(req: NextRequest) {
   try {
@@ -10,23 +8,31 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "sessionId required" }, { status: 400 });
     }
 
-    // Check if user has logged in
-    const result = await checkSession(sessionId);
+    // Check if user has logged in (using our new logic)
+    // Actually, captureToken does exactly this: checks page URL/cookies.
+    // However, the previous logic used checkSession from puppeteer-auth.
+    // Let's stick to the new system.
+    
+    // We can try to capture the token.
+    const result = await captureToken(sessionId);
+    
+    if (result.ok && result.token) {
+       // Login success! Clean up resources
+       console.log(`>> [Capture] Token captured for ${sessionId}, cleaning up...`);
+       await cleanupSession(sessionId);
+       
+       return NextResponse.json({
+         loggedIn: true,
+         token: result.token,
+         // Mapping new result shape to old response shape
+         uid: "admin", // The new logic doesn't return UID yet, mocking for now or extracting if available
+         authPref: "token"
+       });
+    }
 
-    if (result) {
-      // Login detected! Close the tunnel
-      console.log(">> [Capture] Login detected, closing tunnel...");
-      await stopTunnel();
+    // If captureToken returned ok:false, likely not logged in yet or session invalid.
+    return NextResponse.json({ loggedIn: false });
 
-      // Close the remote browser
-      if ((globalThis as any).remoteBrowser) {
-        try {
-          await (globalThis as any).remoteBrowser.close();
-          (globalThis as any).remoteBrowser = null;
-        } catch (e) {
-          console.error("Failed to close browser:", e);
-        }
-      }
 
       return NextResponse.json({
         loggedIn: true,
