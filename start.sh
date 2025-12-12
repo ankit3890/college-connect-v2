@@ -2,7 +2,7 @@
 set -e
 
 # start X virtual framebuffer on :99
-Xvfb :99 -screen 0 1920x1080x24 &
+Xvfb :99 -screen 0 1280x1400x24 &
 
 # export display for Chrome
 export DISPLAY=:99

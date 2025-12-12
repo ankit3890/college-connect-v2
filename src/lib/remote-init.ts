@@ -21,7 +21,7 @@ const activeSessions = new Map<string, ActiveSession>();
 
 async function startPuppeteerBrowser(): Promise<Browser> {
   const browser = await puppeteer.launch({
-    executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || "/usr/bin/google-chrome-stable",
+    executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
     headless: false,
     args: [
       "--no-sandbox",
@@ -29,9 +29,9 @@ async function startPuppeteerBrowser(): Promise<Browser> {
       "--disable-gpu",
       "--disable-dev-shm-usage",
       "--remote-debugging-port=9222",
-      "--window-size=1920,1080"
+      "--window-size=1280,1400"
     ],
-    defaultViewport: { width: 1920, height: 1080 }
+    defaultViewport: { width: 1280, height: 1400 }
   });
   return browser;
 }
