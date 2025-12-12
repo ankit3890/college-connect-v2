@@ -53,16 +53,10 @@ export default function AttendancePage() {
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [showTerms, setShowTerms] = useState(false);
 
+
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-
-  // --- NEW: Captcha Relay State ---
-  const [sessionId, setSessionId] = useState("");
-  const [captchaImg, setCaptchaImg] = useState<string | null>(null);
-  const [captchaNeeded, setCaptchaNeeded] = useState(true); // Default to true
-  const [captchaInput, setCaptchaInput] = useState("");
-  const [checkingLogin, setCheckingLogin] = useState(false);
 
   const [hasLoggedIn, setHasLoggedIn] = useState(false);
   const [authToken, setAuthToken] = useState("");
@@ -101,6 +95,11 @@ export default function AttendancePage() {
   // --- NEW: Graph view state ---
   const [showGraph, setShowGraph] = useState(false);
 
+  // --- Remote Browser State ---
+  const [remoteMode, setRemoteMode] = useState(false);
+  const [remoteTunnelUrl, setRemoteTunnelUrl] = useState<string | null>(null);
+  const [remoteSessionId, setRemoteSessionId] = useState("");
+
   // auto‑hide "success" message after a few seconds
   useEffect(() => {
     if (!msg) return;
@@ -124,144 +123,56 @@ export default function AttendancePage() {
     return `${c.courseCode || c.courseId || "C"}-${c.componentName || ""}`;
   }
 
-  async function handleInitSession() {
-    setLoading(true);
-    setError(null);
-    setMsg(null);
-    try {
-      const res = await fetch("/api/attendance/auth/init", { method: "POST" });
-      const data = await res.json();
+  async function handleStartRemoteBrowser() {
+      setLoading(true);
+      setError(null);
+      setMsg("Starting remote browser... This may take 10-15 seconds.");
       
-      if (!res.ok) throw new Error(data.error || "Failed to init session");
-      
-      setSessionId(data.sessionId);
-      setCaptchaImg(data.screenshot);
-      setCaptchaNeeded(data.captchaNeeded !== false); // Default to true if undefined
-      setMsg(data.captchaNeeded === false ? "Session started. No Captcha detected." : "Session started. Please solve the captcha.");
-    } catch (err: any) {
-      console.error(err);
-      setError(err.message || "Failed to connect to CyberVidya");
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function handleLoginSubmit(e: FormEvent) {
-    e.preventDefault();
-    setError(null);
-    setMsg(null);
-
-    // If Manual Mode (No Captcha needed), we skip credential checks
-    if (captchaNeeded) {
-        if (!sessionId || !cyberId || !cyberPass) {
-             setError("Please fill all fields.");
-             return;
-        }
-        if (!captchaInput) {
-            setError("Please enter the captcha.");
-            return;
-        }
-    } else {
-        // Manual Mode: Just Sync
-        // We don't need credentials
-    }
-
-    setLoading(true);
-    try {
-      // If Manual Mode, redirect logic to Check Login
-      if (!captchaNeeded) {
-          await handleCheckLogin(false);
+      try {
+          const res = await fetch("/api/attendance/auth/remote-init", { method: "POST" });
+          const data = await res.json();
+          
+          if (!res.ok) throw new Error(data.error || "Failed to start remote browser");
+          
+          setRemoteMode(true);
+          setRemoteSessionId(data.sessionId);
+          setRemoteTunnelUrl(data.tunnelUrl);
+          setMsg(null);
+      } catch (err: any) {
+          console.error(err);
+          setError(err.message || "Failed to start remote browser");
+      } finally {
           setLoading(false);
-          return;
       }
-
-      const res = await fetch("/api/attendance/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-            sessionId,
-            user: cyberId, 
-            pass: cyberPass, 
-            captcha: captchaInput 
-        }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error || "Login failed");
-        // Don't reset session immediately, allow retry if just a typo?
-        // Actually, if captcha was wrong, we probably need a NEW session/captcha.
-        // For now, let's reset everything on failure to be safe.
-        setCaptchaImg(null); 
-        setSessionId("");
-        return;
-      }
-
-      setMsg("Login Successful! Loading attendance...");
-      
-      // Save tokens
-      // NOTE: The backend now returns token, uid, authPref directly
-      if (data.token) {
-          // Manually handle tokens & fetch
-          await fetchInitialData(data.token, data.uid, data.authPref);
-          return; // Stop here, fetchInitialData will set state
-      }
-
-    } catch (err: any) {
-      console.error(err);
-      setError("Something went wrong. Please try again.");
-      // We do NOT reset session ID here because user might try again (manual check)
-      // setCaptchaImg(null); 
-      // setSessionId("");
-    } finally {
-      setLoading(false);
-    }
   }
 
-  // Poll for manual login
+  // Poll for login when in remote mode
   useEffect(() => {
-    if (!sessionId || hasLoggedIn) return;
-    
-    const interval = setInterval(async () => {
-         await handleCheckLogin(true); // silent check
-    }, 1000); // Check every 1 second for snappy response
-    
-    return () => clearInterval(interval);
-  }, [sessionId, hasLoggedIn]);
-
-  async function handleCheckLogin(silent = false) {
-    if (!sessionId) return;
-    if (!silent) {
-        setCheckingLogin(true);
-        setError(null);
-    }
-    
-    try {
-        const res = await fetch("/api/attendance/auth/check", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ sessionId })
-        });
-        const data = await res.json();
-        
-        if (data.loggedIn && data.token) {
-            if (!silent) setMsg("Login Detected! Loading data...");
-            // Found it!
-            await fetchInitialData(data.token, data.uid, data.authPref, data); // Pass full data to use student info
-        } else {
-            if (!silent) setMsg("Not logged in yet. Please login in the popup window.");
-        }
-    } catch (e) {
-        if (!silent) console.error(e);
-    } finally {
-        if (silent) {
-             // no-op
-        } else {
-             setCheckingLogin(false);
-        }
-    }
-  }
+      if (!remoteMode || !remoteSessionId || hasLoggedIn) return;
+      
+      const interval = setInterval(async () => {
+          try {
+              const res = await fetch("/api/attendance/auth/capture", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ sessionId: remoteSessionId })
+              });
+              
+              const data = await res.json();
+              
+              if (data.loggedIn && data.token) {
+                  setMsg("Login detected! Syncing data...");
+                  await fetchInitialData(data.token, data.uid, data.authPref, data);
+                  setRemoteMode(false);
+                  setRemoteTunnelUrl(null);
+              }
+          } catch (e) {
+              console.error("Remote capture poll error:", e);
+          }
+      }, 2000); // Poll every 2 seconds
+      
+      return () => clearInterval(interval);
+  }, [remoteMode, remoteSessionId, hasLoggedIn]);
 
   // Helper to fetch data after login
   async function fetchInitialData(token: string, uid: number, authPref: string, fullData?: any) {
@@ -647,7 +558,7 @@ export default function AttendancePage() {
         {/* Login card */}
         {!hasLoggedIn && (
           <div className="flex flex-col items-center justify-center min-h-[60vh]">
-            <section className="w-full max-w-md bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 overflow-hidden">
+            <section className="w-full max-w-6xl bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 overflow-hidden">
               {/* Header */}
               <div className="px-6 py-8 text-center border-b border-slate-50 dark:border-slate-700">
                 <div className="w-16 h-16 bg-slate-50 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -665,162 +576,63 @@ export default function AttendancePage() {
               {/* Form */}
               <div className="p-6 sm:p-8 space-y-6">
                 
-                {/* STEP 1: INITIALIZE or LOADING SCREENSHOT */}
-                {!captchaImg && (
-                  <div className="space-y-4">
-                     <div className="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-5 border border-slate-100 dark:border-slate-600">
-                      <h3 className="text-sm font-bold text-slate-800 dark:text-white uppercase tracking-wide mb-3">
-                        How it works:
-                      </h3>
-                      <ul className="space-y-3">
-                        <li className="flex gap-3 text-sm text-slate-600 dark:text-slate-300">
-                          <span className="flex-shrink-0 w-6 h-6 rounded-full bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold text-xs">1</span>
-                          <span>Click <strong>Connect</strong> below.</span>
-                        </li>
-                        <li className="flex gap-3 text-sm text-slate-600 dark:text-slate-300">
-                           <span className="flex-shrink-0 w-6 h-6 rounded-full bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold text-xs">2</span>
-                          <span>We will show you the <strong>CyberVidya Captcha</strong>.</span>
-                        </li>
-                        <li className="flex gap-3 text-sm text-slate-600 dark:text-slate-300">
-                           <span className="flex-shrink-0 w-6 h-6 rounded-full bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold text-xs">3</span>
-                          <span>Enter your ID, Password & Captcha Answer.</span>
-                        </li>
-                      </ul>
-                    </div>
-
-                    <button
-                      onClick={handleInitSession}
-                      disabled={loading}
-                      className="w-full rounded-lg bg-slate-900 dark:bg-white px-4 py-3.5 text-sm font-bold text-white dark:text-black shadow-lg shadow-slate-900/20 dark:shadow-white/20 hover:bg-slate-800 dark:hover:bg-slate-200 hover:shadow-xl hover:shadow-slate-900/30 dark:hover:shadow-white/30 active:scale-[0.98] transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                    >
-                      {loading ? (
-                        <>
-                          <svg className="animate-spin h-4 w-4 text-white dark:text-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                          </svg>
-                          <span>Loading Page...</span>
-                        </>
-                      ) : (
-                        "Connect to CyberVidya"
-                      )}
-                    </button>
+                {/* Remote Browser Section */}
+                <div className="space-y-4">
+                   <div className="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-5 border border-slate-100 dark:border-slate-600">
+                    <h3 className="text-sm font-bold text-slate- dark:text-white uppercase tracking-wide mb-3">
+                      How it works:
+                    </h3>
+                    <ul className="space-y-3">
+                      <li className="flex gap-3 text-sm text-slate-600 dark:text-slate-300">
+                        <span className="flex-shrink-0 w-6 h-6 rounded-full bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold text-xs">1</span>
+                        <span>Click <strong>Start Remote Browser</strong> below.</span>
+                      </li>
+                      <li className="flex gap-3 text-sm text-slate-600 dark:text-slate-300">
+                         <span className="flex-shrink-0 w-6 h-6 rounded-full bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold text-xs">2</span>
+                        <span>A <strong>Chrome window</strong> will open (locally) or you can use the link.</span>
+                      </li>
+                      <li className="flex gap-3 text-sm text-slate-600 dark:text-slate-300">
+                         <span className="flex-shrink-0 w-6 h-6 rounded-full bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold text-xs">3</span>
+                        <span>Login to CyberVidya there. We'll sync automatically!</span>
+                      </li>
+                    </ul>
                   </div>
-                )}
 
-                {/* STEP 2: FILL CREDENTIALS & CAPTCHA */}
-                {captchaImg && (
-                  <form onSubmit={handleLoginSubmit} className="space-y-5 animate-in fade-in slide-in-from-bottom-4 duration-300">
-                     <div className="bg-slate-100 dark:bg-slate-900 rounded-lg p-2 border border-slate-200 dark:border-slate-700 flex justify-center overflow-hidden">
-                        <img src={captchaImg} alt="CyberVidya Captcha" className="max-w-full h-auto rounded shadow-sm opacity-90 hover:opacity-100 transition-opacity" />
-                     </div>
-                     <p className="text-xs text-center text-slate-500">Please enter the text shown in the image above.</p>
-
-                    {captchaNeeded && (
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-1.5 col-span-2 sm:col-span-1">
-                        <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">
-                          User ID
-                        </label>
-                        <input
-                          className="w-full rounded-lg border border-slate-200 dark:border-slate-600 px-3 py-2 text-sm bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:border-slate-900 dark:focus:border-white focus:ring-2 focus:ring-slate-900/10 dark:focus:ring-white/10 outline-none transition-all"
-                          value={cyberId}
-                          onChange={(e) => setCyberId(e.target.value)}
-                          placeholder="ID"
-                          required
-                        />
-                      </div>
-                      <div className="space-y-1.5 col-span-2 sm:col-span-1">
-                        <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">
-                          Password
-                        </label>
-                        <input
-                          className="w-full rounded-lg border border-slate-200 dark:border-slate-600 px-3 py-2 text-sm bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:border-slate-900 dark:focus:border-white focus:ring-2 focus:ring-slate-900/10 dark:focus:ring-white/10 outline-none transition-all"
-                          type="password"
-                          value={cyberPass}
-                          onChange={(e) => setCyberPass(e.target.value)}
-                          placeholder="pass"
-                          required
-                        />
-                      </div>
-                    </div>
-                    )}
-
-                    {captchaNeeded && (
-                      <div className="space-y-1.5 animate-in fade-in slide-in-from-bottom-2">
-                        <label className="block text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wide">
-                          Captcha Answer
-                        </label>
-                        <input
-                          className="w-full rounded-lg border-2 border-indigo-100 dark:border-indigo-900/50 px-4 py-3 text-lg font-mono tracking-widest bg-indigo-50/50 dark:bg-indigo-900/20 text-slate-900 dark:text-white focus:border-indigo-500 dark:focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all placeholder:text-slate-400"
-                          value={captchaInput}
-                          onChange={(e) => setCaptchaInput(e.target.value)}
-                          placeholder="ENTER CAPTCHA"
-                          autoFocus
-                          required
-                        />
-                      </div>
-                    )}
-
-                    {!captchaNeeded && (
-                         <div className="p-4 bg-indigo-50 dark:bg-indigo-900/10 border border-indigo-100 dark:border-indigo-800 rounded-xl text-center space-y-3 animate-pulse">
-                            <div className="flex justify-center">
-                                <span className="relative flex h-3 w-3">
-                                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
-                                  <span className="relative inline-flex rounded-full h-3 w-3 bg-indigo-500"></span>
-                                </span>
-                            </div>
-                            <div>
-                                <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">
-                                    Waiting for login...
-                                </p>
-                                <p className="text-xs text-slate-500 dark:text-slate-400">
-                                    Please login in the popup window.<br/>
-                                    We will sync automatically.
-                                </p>
-                            </div>
-                         </div>
-                    )}
-
-                    <button
-                      type="submit"
-                      disabled={loading || !captchaNeeded} // Disable main button in auto-mode
-                      className={`w-full rounded-lg px-4 py-3.5 text-sm font-bold text-white shadow-lg transition-all flex items-center justify-center gap-2
-                        ${!captchaNeeded ? 'bg-slate-400 cursor-default opacity-50' : 'bg-indigo-600 hover:bg-indigo-700 active:scale-[0.98] shadow-indigo-600/20'}`}
-                    >
-                      {loading ? (
-                         <>
-                          <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                          </svg>
-                          <span>Verifying...</span>
-                        </>
-                      ) : (
-                        captchaNeeded ? "Verify & Login" : "Auto-Syncing..."
-                      )}
-                    </button>
-                    
-                    {/* Only show secondary sync link if we are in captcha mode (as backup) */}
-                    <div className="text-center pt-2">
-                        <button 
-                            type="button" 
-                            onClick={() => handleCheckLogin(false)}
-                            className="text-indigo-500 hover:text-indigo-600 text-xs font-medium hover:underline"
+                  <div className="text-center">
+                    {!remoteMode ? (
+                      <button
+                        onClick={handleStartRemoteBrowser}
+                        disabled={loading}
+                        className="w-full rounded-lg bg-indigo-600 dark:bg-indigo-500 px-4 py-3.5 text-sm font-bold text-white shadow-lg shadow-indigo-600/20 dark:shadow-indigo-500/20 hover:bg-indigo-700 dark:hover:bg-indigo-600 hover:shadow-xl hover:shadow-indigo-600/30 dark:hover:shadow-indigo-500/30 active:scale-[0.98] transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                      >
+                        {loading ? (
+                          <>
+                            <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <span>Starting...</span>
+                          </>
+                        ) : (
+                          "Start Remote Browser"
+                        )}
+                      </button>
+                    ) : remoteTunnelUrl ? (
+                      <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl p-4 space-y-3">
+                        <p className="text-sm font-semibold text-green-700 dark:text-green-300">✅ Remote Browser Ready!</p>
+                        <a 
+                          href={remoteTunnelUrl} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="block w-full rounded-lg bg-green-600 px-4 py-3 text-sm font-bold text-white hover:bg-green-700 transition-all"
                         >
-                            {checkingLogin ? "Checking status..." : "Click here if not syncing automatically"}
-                        </button>
-                    </div>
-                    
-                     <button
-                      type="button"
-                      onClick={() => { setCaptchaImg(null); setSessionId(""); setMsg(null); setError(null); }}
-                      className="w-full text-xs text-slate-400 hover:text-slate-600 underline"
-                    >
-                      Cancel / Retry Screenshot
-                    </button>
-                  </form>
-                )}
+                          Open Real Chrome Window →
+                        </a>
+                        <p className="text-xs text-green-600 dark:text-green-400">Click above, login, and we'll sync automatically!</p>
+                      </div>
+                    ) : null}
+                  </div>
+                </div>
 
                 {error && (
                   <div className="flex items-start gap-3 p-3 rounded-lg bg-red-50 dark:bg-red-900/30 border border-red-100 dark:border-red-800 text-red-600 dark:text-red-300 text-sm animate-in fade-in slide-in-from-top-2">

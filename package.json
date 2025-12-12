@@ -10,6 +10,8 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@ngrok/ngrok": "^1.6.0",
+    "@ngrok/ngrok-win32-x64-msvc": "^1.6.0",
     "bcryptjs": "^3.0.3",
     "better-sqlite3": "^12.5.0",
     "chart.js": "^4.5.1",
