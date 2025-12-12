@@ -71,6 +71,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   wget \
   gnupg \
   ca-certificates \
+  xvfb \
   fonts-ipafont-gothic \
   fonts-wqy-zenhei \
   fonts-thai-tlwg \
@@ -123,5 +124,8 @@ EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-# Run the standalone server (Next.js creates server.js inside standalone)
-CMD ["node", "server.js"]
+COPY start.sh /app/start.sh
+RUN chmod +x /app/start.sh
+
+# Run with xvfb via start.sh
+CMD ["/app/start.sh"]
