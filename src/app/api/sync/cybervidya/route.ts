@@ -27,22 +27,28 @@ export async function POST(req: Request) {
       return NextResponse.json({ msg: "Invalid token" }, { status: 401 });
     }
 
-    const { cyberId, cyberPass } = await req.json();
+    const { cyberId, cyberPass, token, uid, authPref } = await req.json();
 
-    if (!cyberId || !cyberPass) {
+    // We allow either Credentials OR Token
+    if ( (!cyberId || !cyberPass) && (!token || !uid) ) {
       return NextResponse.json(
-        { msg: "Missing CyberVidya credentials" },
+        { msg: "Missing CyberVidya credentials or session token" },
         { status: 400 }
       );
     }
 
     // 1️⃣ Fetch profile from CyberVidya
-    const profile = await getProfileFromCyberVidya(cyberId, cyberPass);
+    let session = undefined;
+    if (token && uid) {
+        session = { token, uid, authPref: authPref || "GlobalEducation " };
+    }
+    
+    const profile = await getProfileFromCyberVidya(cyberId || "", cyberPass || "", session);
     console.log("CyberVidya profile object:", profile);
 
     if (!profile) {
       return NextResponse.json(
-        { msg: "Could not verify CyberVidya credentials" },
+        { msg: "Could not verify CyberVidya credentials or session" },
         { status: 400 }
       );
     }
@@ -68,14 +74,15 @@ export async function POST(req: Request) {
     });
 
     if (existing) {
-      return NextResponse.json(
-        {
-          msg:
-            "This CyberVidya ID is already linked to another account. " +
-            "If you think this is a mistake, contact support.",
-        },
-        { status: 409 }
-      );
+      console.log(`⚠️ Conflict detected! Student ID ${cyberStudentId} is linked to User ${existing._id}. Unlinking old account.`);
+      
+      // Unlink the old account to allow the new one to take over
+      existing.studentId = undefined;
+      (existing as any).cyberUserName = undefined; // Create a type-safe interface if needed, or cast
+      existing.hasSyncedFromCyberVidya = false;
+      await existing.save();
+      
+      // We do NOT return error anymore. We proceed to link the current user.
     }
 
     // 4️⃣ Map CyberVidya fields → your User model

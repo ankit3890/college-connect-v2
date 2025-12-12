@@ -57,7 +57,18 @@ export default function AttendancePage() {
   const [msg, setMsg] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  // --- NEW: Captcha Relay State ---
+  const [sessionId, setSessionId] = useState("");
+  const [captchaImg, setCaptchaImg] = useState<string | null>(null);
+  const [captchaNeeded, setCaptchaNeeded] = useState(true); // Default to true
+  const [captchaInput, setCaptchaInput] = useState("");
+  const [checkingLogin, setCheckingLogin] = useState(false);
+
   const [hasLoggedIn, setHasLoggedIn] = useState(false);
+  const [authToken, setAuthToken] = useState("");
+  const [authUid, setAuthUid] = useState<number | null>(null);
+  const [authPref, setAuthPref] = useState("");
+  
   const [student, setStudent] = useState<StudentInfo | null>(null);
   const [courses, setCourses] = useState<AttendanceCourse[]>([]);
 
@@ -113,62 +124,169 @@ export default function AttendancePage() {
     return `${c.courseCode || c.courseId || "C"}-${c.componentName || ""}`;
   }
 
-  async function handleSubmit(e: FormEvent) {
+  async function handleInitSession() {
+    setLoading(true);
+    setError(null);
+    setMsg(null);
+    try {
+      const res = await fetch("/api/attendance/auth/init", { method: "POST" });
+      const data = await res.json();
+      
+      if (!res.ok) throw new Error(data.error || "Failed to init session");
+      
+      setSessionId(data.sessionId);
+      setCaptchaImg(data.screenshot);
+      setCaptchaNeeded(data.captchaNeeded !== false); // Default to true if undefined
+      setMsg(data.captchaNeeded === false ? "Session started. No Captcha detected." : "Session started. Please solve the captcha.");
+    } catch (err: any) {
+      console.error(err);
+      setError(err.message || "Failed to connect to CyberVidya");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleLoginSubmit(e: FormEvent) {
     e.preventDefault();
     setError(null);
     setMsg(null);
 
-    if (!cyberId || !cyberPass) {
-      setError("Please enter your CyberVidya credentials.");
-      return;
-    }
-
-    if (!acceptedTerms) {
-      setError("You must accept the Terms and Conditions to proceed.");
-      return;
+    // If Manual Mode (No Captcha needed), we skip credential checks
+    if (captchaNeeded) {
+        if (!sessionId || !cyberId || !cyberPass) {
+             setError("Please fill all fields.");
+             return;
+        }
+        if (!captchaInput) {
+            setError("Please enter the captcha.");
+            return;
+        }
+    } else {
+        // Manual Mode: Just Sync
+        // We don't need credentials
     }
 
     setLoading(true);
     try {
-      const res = await fetch("/api/attendance/login", {
+      // If Manual Mode, redirect logic to Check Login
+      if (!captchaNeeded) {
+          await handleCheckLogin(false);
+          setLoading(false);
+          return;
+      }
+
+      const res = await fetch("/api/attendance/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ cyberId, cyberPass }),
+        body: JSON.stringify({ 
+            sessionId,
+            user: cyberId, 
+            pass: cyberPass, 
+            captcha: captchaInput 
+        }),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.msg || "Failed to fetch attendance");
-        setHasLoggedIn(false);
-        setStudent(null);
-        setCourses([]);
+        setError(data.error || "Login failed");
+        // Don't reset session immediately, allow retry if just a typo?
+        // Actually, if captcha was wrong, we probably need a NEW session/captcha.
+        // For now, let's reset everything on failure to be safe.
+        setCaptchaImg(null); 
+        setSessionId("");
         return;
       }
 
-      setMsg(data.msg || "Attendance loaded from CyberVidya");
-      setStudent(data.student || null);
-      setCourses(data.courses || []);
-      setHasLoggedIn(true);
-
-      // Handle Remember Me
-      if (rememberMe) {
-        localStorage.setItem("cyberId", cyberId);
-        localStorage.setItem("cyberPass", cyberPass);
-      } else {
-        localStorage.removeItem("cyberId");
-        localStorage.removeItem("cyberPass");
+      setMsg("Login Successful! Loading attendance...");
+      
+      // Save tokens
+      // NOTE: The backend now returns token, uid, authPref directly
+      if (data.token) {
+          // Manually handle tokens & fetch
+          await fetchInitialData(data.token, data.uid, data.authPref);
+          return; // Stop here, fetchInitialData will set state
       }
 
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
       setError("Something went wrong. Please try again.");
-      setHasLoggedIn(false);
-      setStudent(null);
-      setCourses([]);
+      // We do NOT reset session ID here because user might try again (manual check)
+      // setCaptchaImg(null); 
+      // setSessionId("");
     } finally {
       setLoading(false);
     }
+  }
+
+  // Poll for manual login
+  useEffect(() => {
+    if (!sessionId || hasLoggedIn) return;
+    
+    const interval = setInterval(async () => {
+         await handleCheckLogin(true); // silent check
+    }, 1000); // Check every 1 second for snappy response
+    
+    return () => clearInterval(interval);
+  }, [sessionId, hasLoggedIn]);
+
+  async function handleCheckLogin(silent = false) {
+    if (!sessionId) return;
+    if (!silent) {
+        setCheckingLogin(true);
+        setError(null);
+    }
+    
+    try {
+        const res = await fetch("/api/attendance/auth/check", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ sessionId })
+        });
+        const data = await res.json();
+        
+        if (data.loggedIn && data.token) {
+            if (!silent) setMsg("Login Detected! Loading data...");
+            // Found it!
+            await fetchInitialData(data.token, data.uid, data.authPref, data); // Pass full data to use student info
+        } else {
+            if (!silent) setMsg("Not logged in yet. Please login in the popup window.");
+        }
+    } catch (e) {
+        if (!silent) console.error(e);
+    } finally {
+        if (silent) {
+             // no-op
+        } else {
+             setCheckingLogin(false);
+        }
+    }
+  }
+
+  // Helper to fetch data after login
+  async function fetchInitialData(token: string, uid: number, authPref: string, fullData?: any) {
+       setHasLoggedIn(true);
+       setAuthToken(token);
+       setAuthUid(uid);
+       setAuthPref(authPref);
+       
+       if (fullData) {
+           if (fullData.student) setStudent(fullData.student);
+           if (fullData.courses) setCourses(fullData.courses);
+       }
+       
+       // NEW: Save tokens for other pages (like Profile)
+       localStorage.setItem("att_token", token);
+       localStorage.setItem("att_uid", String(uid));
+       localStorage.setItem("att_authPref", authPref);
+       
+       if (rememberMe) {
+        localStorage.setItem("cyberId", cyberId);
+        localStorage.setItem("cyberPass", cyberPass);
+       } else {
+        localStorage.removeItem("cyberId");
+        localStorage.removeItem("cyberPass");
+       }
   }
 
   function handleLogout() {
@@ -227,8 +345,8 @@ export default function AttendancePage() {
       return;
     }
 
-    if (!cyberId || !cyberPass) {
-      setError("CyberVidya login expired. Please login again.");
+    if (!hasLoggedIn) {
+      setError("Please login first.");
       return;
     }
 
@@ -239,7 +357,7 @@ export default function AttendancePage() {
     setDaywiseLoading(true);
 
     try {
-      // 1. Fetch past attendance
+      // 1. Fetch past attendance with TOKEN
       const res = await fetch("/api/attendance/daywise", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -248,8 +366,9 @@ export default function AttendancePage() {
           courseId: course.courseId,
           sessionId: course.sessionId ?? null,
           studentId: course.studentId,
-          cyberId,
-          cyberPass,
+          token: authToken,
+          uid: authUid,
+          authPref: authPref
         }),
       });
 
@@ -289,8 +408,8 @@ export default function AttendancePage() {
   }
 
   async function handleOpenSchedule(course: AttendanceCourse) {
-    if (!cyberId || !cyberPass) {
-      setError("CyberVidya login expired. Please login again.");
+    if (!hasLoggedIn) {
+      setError("Please login first.");
       return;
     }
 
@@ -309,7 +428,7 @@ export default function AttendancePage() {
       const endStr = nextMonth.toISOString().split('T')[0];
 
       const scheduleRes = await fetch(
-        `/api/schedule?cyberId=${encodeURIComponent(cyberId)}&cyberPass=${encodeURIComponent(cyberPass)}&weekStartDate=${startStr}&weekEndDate=${endStr}`
+        `/api/schedule?token=${encodeURIComponent(authToken||"")}&uid=${authUid}&authPref=${encodeURIComponent(authPref||"")}&weekStartDate=${startStr}&weekEndDate=${endStr}`
       );
 
       if (scheduleRes.ok) {
@@ -404,8 +523,8 @@ export default function AttendancePage() {
 
   // --- NEW: Timetable handlers ---
   async function handleOpenTimetable() {
-    if (!cyberId || !cyberPass) {
-      setError("CyberVidya login expired. Please login again.");
+    if (!hasLoggedIn) {
+      setError("Please login first.");
       return;
     }
 
@@ -426,7 +545,7 @@ export default function AttendancePage() {
       const endStr = sunday.toISOString().split('T')[0];
 
       const scheduleRes = await fetch(
-        `/api/schedule?cyberId=${encodeURIComponent(cyberId)}&cyberPass=${encodeURIComponent(cyberPass)}&weekStartDate=${startStr}&weekEndDate=${endStr}`
+        `/api/schedule?token=${encodeURIComponent(authToken||"")}&uid=${authUid}&authPref=${encodeURIComponent(authPref||"")}&weekStartDate=${startStr}&weekEndDate=${endStr}`
       );
 
       if (scheduleRes.ok) {
@@ -539,111 +658,172 @@ export default function AttendancePage() {
                 </div>
                 <h2 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Welcome Back</h2>
                 <p className="text-slate-500 dark:text-slate-400 text-sm mt-2">
-                  Enter your CyberVidya credentials to access your attendance dashboard.
+                  Connect to CyberVidya to access your dashboard.
                 </p>
               </div>
 
               {/* Form */}
               <div className="p-6 sm:p-8 space-y-6">
-                <form onSubmit={handleSubmit} className="space-y-5">
-                  <div className="space-y-1.5">
-                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">
-                      Cybervidya ID
-                    </label>
-                    <div className="relative">
-                      <input
-                        className="w-full rounded-lg border border-slate-200 dark:border-slate-600 px-4 py-3 text-sm bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:border-slate-900 dark:focus:border-white focus:ring-2 focus:ring-slate-900/10 dark:focus:ring-white/10 outline-none transition-all placeholder:text-slate-400"
-                        value={cyberId}
-                        onChange={(e) => setCyberId(e.target.value)}
-                        placeholder="e.g. 202412345678901"
-                      />
+                
+                {/* STEP 1: INITIALIZE or LOADING SCREENSHOT */}
+                {!captchaImg && (
+                  <div className="space-y-4">
+                     <div className="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-5 border border-slate-100 dark:border-slate-600">
+                      <h3 className="text-sm font-bold text-slate-800 dark:text-white uppercase tracking-wide mb-3">
+                        How it works:
+                      </h3>
+                      <ul className="space-y-3">
+                        <li className="flex gap-3 text-sm text-slate-600 dark:text-slate-300">
+                          <span className="flex-shrink-0 w-6 h-6 rounded-full bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold text-xs">1</span>
+                          <span>Click <strong>Connect</strong> below.</span>
+                        </li>
+                        <li className="flex gap-3 text-sm text-slate-600 dark:text-slate-300">
+                           <span className="flex-shrink-0 w-6 h-6 rounded-full bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold text-xs">2</span>
+                          <span>We will show you the <strong>CyberVidya Captcha</strong>.</span>
+                        </li>
+                        <li className="flex gap-3 text-sm text-slate-600 dark:text-slate-300">
+                           <span className="flex-shrink-0 w-6 h-6 rounded-full bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold text-xs">3</span>
+                          <span>Enter your ID, Password & Captcha Answer.</span>
+                        </li>
+                      </ul>
                     </div>
+
+                    <button
+                      onClick={handleInitSession}
+                      disabled={loading}
+                      className="w-full rounded-lg bg-slate-900 dark:bg-white px-4 py-3.5 text-sm font-bold text-white dark:text-black shadow-lg shadow-slate-900/20 dark:shadow-white/20 hover:bg-slate-800 dark:hover:bg-slate-200 hover:shadow-xl hover:shadow-slate-900/30 dark:hover:shadow-white/30 active:scale-[0.98] transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    >
+                      {loading ? (
+                        <>
+                          <svg className="animate-spin h-4 w-4 text-white dark:text-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          <span>Loading Page...</span>
+                        </>
+                      ) : (
+                        "Connect to CyberVidya"
+                      )}
+                    </button>
                   </div>
+                )}
 
-                  <div className="space-y-1.5">
-                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">
-                      Password
-                    </label>
-                    <div className="relative">
-                      <input
-                        className="w-full rounded-lg border border-slate-200 dark:border-slate-600 px-4 py-3 text-sm bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:border-slate-900 dark:focus:border-white focus:ring-2 focus:ring-slate-900/10 dark:focus:ring-white/10 outline-none transition-all placeholder:text-slate-400"
-                        type="password"
-                        value={cyberPass}
-                        onChange={(e) => setCyberPass(e.target.value)}
-                        placeholder="••••••••"
-                      />
-                    </div>
-                  </div>
+                {/* STEP 2: FILL CREDENTIALS & CAPTCHA */}
+                {captchaImg && (
+                  <form onSubmit={handleLoginSubmit} className="space-y-5 animate-in fade-in slide-in-from-bottom-4 duration-300">
+                     <div className="bg-slate-100 dark:bg-slate-900 rounded-lg p-2 border border-slate-200 dark:border-slate-700 flex justify-center overflow-hidden">
+                        <img src={captchaImg} alt="CyberVidya Captcha" className="max-w-full h-auto rounded shadow-sm opacity-90 hover:opacity-100 transition-opacity" />
+                     </div>
+                     <p className="text-xs text-center text-slate-500">Please enter the text shown in the image above.</p>
 
-                  <div className="space-y-3">
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={rememberMe}
-                        onChange={(e) => setRememberMe(e.target.checked)}
-                        className="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-slate-900 focus:ring-slate-900"
-                      />
-                      <span className="text-sm text-slate-600 dark:text-slate-400">Remember Me</span>
-                    </label>
-
-                    <div className="flex items-center gap-3">
-                      <div className="relative flex items-center">
+                    {captchaNeeded && (
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-1.5 col-span-2 sm:col-span-1">
+                        <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">
+                          User ID
+                        </label>
                         <input
-                          type="checkbox"
-                          id="terms"
-                          className="peer h-5 w-5 cursor-pointer appearance-none rounded-md border-2 border-slate-200 dark:border-slate-600 transition-all checked:border-slate-900 dark:checked:border-white checked:bg-slate-900 dark:checked:bg-white hover:border-slate-300 dark:hover:border-slate-500"
-                          checked={acceptedTerms}
-                          onChange={(e) => setAcceptedTerms(e.target.checked)}
+                          className="w-full rounded-lg border border-slate-200 dark:border-slate-600 px-3 py-2 text-sm bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:border-slate-900 dark:focus:border-white focus:ring-2 focus:ring-slate-900/10 dark:focus:ring-white/10 outline-none transition-all"
+                          value={cyberId}
+                          onChange={(e) => setCyberId(e.target.value)}
+                          placeholder="ID"
+                          required
                         />
-                        <svg
-                          className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-white dark:text-black opacity-0 transition-opacity peer-checked:opacity-100"
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="3"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          width="14"
-                          height="14"
-                        >
-                          <polyline points="20 6 9 17 4 12"></polyline>
-                        </svg>
                       </div>
-                      <label htmlFor="terms" className="text-sm text-slate-600 dark:text-slate-400 select-none">
-                        I agree to the{" "}
-                        <button
-                          type="button"
-                          onClick={() => setShowTerms(true)}
-                          className="font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 hover:underline focus:outline-none"
-                        >
-                          Terms and Conditions
-                        </button>
-                      </label>
+                      <div className="space-y-1.5 col-span-2 sm:col-span-1">
+                        <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">
+                          Password
+                        </label>
+                        <input
+                          className="w-full rounded-lg border border-slate-200 dark:border-slate-600 px-3 py-2 text-sm bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:border-slate-900 dark:focus:border-white focus:ring-2 focus:ring-slate-900/10 dark:focus:ring-white/10 outline-none transition-all"
+                          type="password"
+                          value={cyberPass}
+                          onChange={(e) => setCyberPass(e.target.value)}
+                          placeholder="pass"
+                          required
+                        />
+                      </div>
                     </div>
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full rounded-lg bg-slate-900 dark:bg-white px-4 py-3.5 text-sm font-bold text-white dark:text-black shadow-lg shadow-slate-900/20 dark:shadow-white/20 hover:bg-slate-800 dark:hover:bg-slate-200 hover:shadow-xl hover:shadow-slate-900/30 dark:hover:shadow-white/30 active:scale-[0.98] transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                  >
-                    {loading ? (
-                      <>
-                        <svg className="animate-spin h-4 w-4 text-white dark:text-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        <span>Fetching Data...</span>
-                      </>
-                    ) : (
-                      "Access Dashboard"
                     )}
-                  </button>
-                </form>
+
+                    {captchaNeeded && (
+                      <div className="space-y-1.5 animate-in fade-in slide-in-from-bottom-2">
+                        <label className="block text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wide">
+                          Captcha Answer
+                        </label>
+                        <input
+                          className="w-full rounded-lg border-2 border-indigo-100 dark:border-indigo-900/50 px-4 py-3 text-lg font-mono tracking-widest bg-indigo-50/50 dark:bg-indigo-900/20 text-slate-900 dark:text-white focus:border-indigo-500 dark:focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all placeholder:text-slate-400"
+                          value={captchaInput}
+                          onChange={(e) => setCaptchaInput(e.target.value)}
+                          placeholder="ENTER CAPTCHA"
+                          autoFocus
+                          required
+                        />
+                      </div>
+                    )}
+
+                    {!captchaNeeded && (
+                         <div className="p-4 bg-indigo-50 dark:bg-indigo-900/10 border border-indigo-100 dark:border-indigo-800 rounded-xl text-center space-y-3 animate-pulse">
+                            <div className="flex justify-center">
+                                <span className="relative flex h-3 w-3">
+                                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                                  <span className="relative inline-flex rounded-full h-3 w-3 bg-indigo-500"></span>
+                                </span>
+                            </div>
+                            <div>
+                                <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">
+                                    Waiting for login...
+                                </p>
+                                <p className="text-xs text-slate-500 dark:text-slate-400">
+                                    Please login in the popup window.<br/>
+                                    We will sync automatically.
+                                </p>
+                            </div>
+                         </div>
+                    )}
+
+                    <button
+                      type="submit"
+                      disabled={loading || !captchaNeeded} // Disable main button in auto-mode
+                      className={`w-full rounded-lg px-4 py-3.5 text-sm font-bold text-white shadow-lg transition-all flex items-center justify-center gap-2
+                        ${!captchaNeeded ? 'bg-slate-400 cursor-default opacity-50' : 'bg-indigo-600 hover:bg-indigo-700 active:scale-[0.98] shadow-indigo-600/20'}`}
+                    >
+                      {loading ? (
+                         <>
+                          <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          <span>Verifying...</span>
+                        </>
+                      ) : (
+                        captchaNeeded ? "Verify & Login" : "Auto-Syncing..."
+                      )}
+                    </button>
+                    
+                    {/* Only show secondary sync link if we are in captcha mode (as backup) */}
+                    <div className="text-center pt-2">
+                        <button 
+                            type="button" 
+                            onClick={() => handleCheckLogin(false)}
+                            className="text-indigo-500 hover:text-indigo-600 text-xs font-medium hover:underline"
+                        >
+                            {checkingLogin ? "Checking status..." : "Click here if not syncing automatically"}
+                        </button>
+                    </div>
+                    
+                     <button
+                      type="button"
+                      onClick={() => { setCaptchaImg(null); setSessionId(""); setMsg(null); setError(null); }}
+                      className="w-full text-xs text-slate-400 hover:text-slate-600 underline"
+                    >
+                      Cancel / Retry Screenshot
+                    </button>
+                  </form>
+                )}
 
                 {error && (
-                  <div className="flex items-start gap-3 p-3 rounded-lg bg-red-50 dark:bg-red-900/30 border border-red-100 dark:border-red-800 text-red-600 dark:text-red-300 text-sm">
+                  <div className="flex items-start gap-3 p-3 rounded-lg bg-red-50 dark:bg-red-900/30 border border-red-100 dark:border-red-800 text-red-600 dark:text-red-300 text-sm animate-in fade-in slide-in-from-top-2">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="flex-shrink-0 mt-0.5">
                       <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
                       <path d="M12 8v4m0 4h.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
@@ -651,13 +831,9 @@ export default function AttendancePage() {
                     <p>{error}</p>
                   </div>
                 )}
-
-                {msg && !error && (
+                
+                 {msg && !error && (
                   <div className="flex items-start gap-3 p-3 rounded-lg bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-100 dark:border-emerald-800 text-emerald-600 dark:text-emerald-300 text-sm">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="flex-shrink-0 mt-0.5">
-                      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
-                      <path d="M8 12l2.5 2.5L15.5 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
                     <p>{msg}</p>
                   </div>
                 )}
@@ -667,9 +843,7 @@ export default function AttendancePage() {
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
-                    {rememberMe
-                      ? "Credentials stored securely on your device."
-                      : "Your credentials are never stored."}
+                    Your credentials form a one-time session.
                   </p>
                 </div>
               </div>

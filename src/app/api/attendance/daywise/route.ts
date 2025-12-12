@@ -29,23 +29,34 @@ interface DaywiseResponse {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { courseCompId, courseId, sessionId, studentId, cyberId, cyberPass } = body || {};
+    const { courseCompId, courseId, sessionId, studentId, cyberId, cyberPass, token: reqToken, uid: reqUid, authPref: reqAuthPref } = body || {};
 
-    if (!courseCompId || !courseId || !studentId || !cyberId || !cyberPass) {
+    if (!courseCompId || !courseId || !studentId) {
       return NextResponse.json(
         { msg: "Missing required fields for daywise attendance" },
         { status: 400 }
       );
     }
 
-    // 1) Login with student credentials
-    console.log("⏩ CyberVidya login for daywise:", cyberId);
-    const login = await loginToCyberVidya(cyberId, cyberPass);
-    if (!login) {
-      return NextResponse.json({ msg: "CyberVidya login failed" }, { status: 401 });
+    let token = reqToken;
+    let uid = reqUid;
+    let authPref = reqAuthPref;
+
+    // If no token provided, try login
+    if (!token && cyberId && cyberPass) {
+        console.log("⏩ CyberVidya login for daywise:", cyberId);
+        const login = await loginToCyberVidya(cyberId, cyberPass);
+        if (login) {
+            token = login.token;
+            uid = login.uid;
+            authPref = login.authPref;
+        }
     }
 
-    const { token, uid, authPref } = login;
+    if (!token || !uid) {
+         return NextResponse.json({ msg: "Authentication failed. No valid token or credentials." }, { status: 401 });
+    }
+
     const headers: HeadersInit = {
       Accept: "application/json",
       "Content-Type": "application/json",

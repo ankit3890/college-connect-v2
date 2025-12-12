@@ -79,18 +79,23 @@ export default function EditProfilePage() {
                     router.push("/login");
                     throw new Error("Not logged in");
                 }
-                if (!res.ok) throw new Error("Failed to load profile");
+                if (!res.ok) {
+                    const data = await res.json().catch(() => ({}));
+                    throw new Error(data.msg || "Failed to load profile");
+                }
                 return res.json();
             })
             .then((data) => {
                 const p = data.profile;
+                if (!p) throw new Error("Profile data missing");
+
                 setProfile(p);
                 setFormData({
                     displayName: p.displayName || "",
                     username: p.username || "",
                     bio: p.bio || "",
                     statusText: p.statusText || "",
-                    mobileNumber: p.mobileNumber || "",
+                    mobileNumber: p.mobileNumber || p.mobile || "", // handle both naming conventions if any
                     accentColor: p.accentColor || "#3b82f6",
                     interests: p.interests?.join(", ") || "",
                     skills: p.skills?.join(", ") || "",
@@ -107,7 +112,10 @@ export default function EditProfilePage() {
             .catch((err) => {
                 console.error(err);
                 // Only set loading false if not redirected
-                if (err.message !== "Not logged in") setLoading(false);
+                if (err.message !== "Not logged in") {
+                    setMessage({ type: "error", text: err.message });
+                    setLoading(false);
+                }
             });
     }, [router]);
 
@@ -208,17 +216,82 @@ export default function EditProfilePage() {
         }
     };
 
+    // --- NEW: Popup Auth Logic ---
+    function handleConnectCyberVidya() {
+        // 1. Open Attendance page in new tab
+        const width = 1000;
+        const height = 800;
+        const left = (window.screen.width - width) / 2;
+        const top = (window.screen.height - height) / 2;
+        
+        window.open(
+            "/attendance", 
+            "CyberVidyaLogin", 
+            `width=${width},height=${height},top=${top},left=${left},resizable,scrollbars`
+        );
+        
+        setSyncLoading(true);
+        setSyncMessage("Waiting for login in the new window...");
+        
+        // 2. Poll for token in localStorage
+        const interval = setInterval(() => {
+            const token = localStorage.getItem("att_token");
+            const uid = localStorage.getItem("att_uid");
+            const authPref = localStorage.getItem("att_authPref");
+            
+            if (token && uid) {
+                // Login detected!
+                clearInterval(interval);
+                setSyncMessage("Login detected! Syncing profile...");
+                
+                // 3. Trigger Sync
+                handleSync(new Event('submit') as any, { 
+                    token, 
+                    uid: Number(uid), 
+                    authPref: authPref || "" 
+                });
+            }
+        }, 1000);
+        
+        // Timeout after 2 minutes
+        setTimeout(() => {
+            clearInterval(interval);
+            if (syncLoading) {
+                 setSyncLoading(false);
+                 setSyncMessage("Login timed out. Please try again.");
+            }
+        }, 120000);
+    }
+
     // Sync Handler
-    async function handleSync(e: FormEvent) {
+    async function handleSync(e: FormEvent, providedSession?: { token: string, uid: number, authPref: string }) {
         e.preventDefault();
         setSyncMessage(null);
+        
+        let body: any = {};
+        
+        if (providedSession) {
+             body = providedSession;
+        } else {
+            const token = localStorage.getItem("att_token"); 
+            const uidStr = localStorage.getItem("att_uid");
+            const authPref = localStorage.getItem("att_authPref"); 
+            
+            if (token && uidStr) {
+                 body = { token, uid: Number(uidStr), authPref };
+            } else {
+                 setSyncMessage("No session found. Please connect via the popup.");
+                 return;
+            }
+        }
+
         setSyncLoading(true);
 
         try {
             const res = await fetch("/api/sync/cybervidya", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ cyberId, cyberPass }),
+                body: JSON.stringify(body),
             });
 
             const raw = await res.json();
@@ -276,8 +349,12 @@ export default function EditProfilePage() {
                 <div className="flex items-center justify-between mb-4">
                     <h1 className="text-xl font-bold text-slate-900 dark:text-white">Edit Profile</h1>
                     <button
-                        onClick={() => router.push(`/u/${profile?.username}`)}
-                        className="text-xs font-bold text-blue-600 hover:underline"
+                        onClick={() => {
+                             const target = profile?.username || profile?.studentId;
+                             if (target) router.push(`/u/${target}`);
+                        }}
+                        disabled={!profile?.username && !profile?.studentId}
+                        className="text-xs font-bold text-blue-600 hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         View Public Profile
                     </button>
@@ -629,56 +706,25 @@ export default function EditProfilePage() {
                             </div>
 
                             <p className="text-sm text-slate-600 dark:text-slate-400">
-                                Enter your CyberVidya credentials to update your official details (Name, Branch, Year).
-                                Credentials are not stored.
+                                Connect to verify your identity directly with CyberVidya.
                             </p>
 
                             {syncMessage && (
-                                <div className={`text-sm p-2 rounded ${syncMessage.includes("success") ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"}`}>
+                                <div className={`text-sm p-2 rounded ${syncMessage.includes("success") || syncMessage.includes("detected") ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"}`}>
                                     {syncMessage}
                                 </div>
                             )}
 
-                            <form onSubmit={handleSync} className="space-y-3">
-                                <div>
-                                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">CyberVidya ID</label>
-                                    <input
-                                        className="w-full border-2 border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2 text-sm focus:border-black dark:focus:border-slate-400 focus:outline-none bg-white dark:bg-slate-900 text-slate-900 dark:text-white"
-                                        value={cyberId}
-                                        onChange={(e) => setCyberId(e.target.value)}
-                                        placeholder="e.g. 202412345678901"
-                                        required
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Password</label>
-                                    <input
-                                        type="password"
-                                        className="w-full border-2 border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2 text-sm focus:border-black dark:focus:border-slate-400 focus:outline-none bg-white dark:bg-slate-900 text-slate-900 dark:text-white"
-                                        value={cyberPass}
-                                        onChange={(e) => setCyberPass(e.target.value)}
-                                        placeholder="Your CyberVidya password"
-                                        required
-                                    />
-                                </div>
-
-                                <div className="pt-2 flex gap-3">
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowSyncModal(false)}
-                                        className="flex-1 px-4 py-2 border-2 border-slate-300 dark:border-slate-600 rounded-lg text-slate-700 dark:text-slate-300 text-sm font-bold hover:bg-slate-50 dark:hover:bg-slate-700"
-                                    >
-                                        Cancel
-                                    </button>
-                                    <button
-                                        type="submit"
-                                        disabled={syncLoading}
-                                        className="flex-1 px-4 py-2 bg-blue-600 border-2 border-blue-600 text-white rounded-lg text-sm font-bold hover:bg-blue-700 disabled:opacity-50"
-                                    >
-                                        {syncLoading ? "Syncing..." : "Sync Now"}
-                                    </button>
-                                </div>
-                            </form>
+                            <div className="py-2">
+                                <button
+                                    onClick={handleConnectCyberVidya}
+                                    type="button"
+                                    disabled={syncLoading}
+                                    className="w-full rounded-md bg-slate-900 dark:bg-white text-white dark:text-black px-4 py-2 text-sm font-bold disabled:opacity-50"
+                                >
+                                    {syncLoading ? "Connecting..." : "Connect to CyberVidya"}
+                                </button>
+                            </div>
                         </div>
                     </div>
                 )

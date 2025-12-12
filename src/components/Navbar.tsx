@@ -127,8 +127,8 @@ export default function Navbar() {
         </div>
       )}
 
-      {/* Sync Profile Banner */}
-      {user && !user.hasSyncedFromCyberVidya && (
+      {/* Sync Profile Banner - Hide on Attendance page to avoid clutter in popup */}
+      {user && !user.hasSyncedFromCyberVidya && pathname !== "/attendance" && (
         <div className="w-full bg-red-50 dark:bg-red-900 border-b border-red-200 dark:border-red-700 transition-colors">
           <Link 
             href="/profile/edit" 
@@ -170,9 +170,7 @@ export default function Navbar() {
                   Profile
                 </Link>
 
-                <Link href="/community" className={linkClass("/community")}>
-                  Community
-                </Link>
+
 
                 {isAdmin && (
                   <>
@@ -249,13 +247,7 @@ export default function Navbar() {
                   Profile
                 </Link>
 
-                <Link
-                  href="/community"
-                  className={linkClass("/community", true)}
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Community
-                </Link>
+
 
                 {isAdmin && (
                   <>

@@ -10,21 +10,38 @@ export async function GET(req: NextRequest) {
     const cyberPass = url.searchParams.get("cyberPass");
     const weekStartDate = url.searchParams.get("weekStartDate");
     const weekEndDate = url.searchParams.get("weekEndDate");
+    
+    // Authorization via Token
+    const qToken = url.searchParams.get("token");
+    const qUid = url.searchParams.get("uid");
+    const qAuthPref = url.searchParams.get("authPref");
 
-    if (!cyberId || !cyberPass || !weekStartDate || !weekEndDate) {
+    if (!weekStartDate || !weekEndDate) {
       return NextResponse.json(
-        { msg: "Missing fields for schedule API" },
+        { msg: "Missing date range for schedule API" },
         { status: 400 }
       );
     }
+    
+    let token = qToken;
+    let uid = qUid ? Number(qUid) : 0;
+    let authPref = qAuthPref || "GlobalEducation ";
 
-    // login first
-    const login = await loginToCyberVidya(cyberId, cyberPass);
-    if (!login) {
-      return NextResponse.json({ msg: "Login failed" }, { status: 401 });
+    // Fallback to login if no token provided
+    if (!token && cyberId && cyberPass) {
+        // login first
+        const login = await loginToCyberVidya(cyberId, cyberPass);
+        if (login) {
+            token = login.token;
+            uid = login.uid;
+            authPref = login.authPref;
+        }
+    }
+    
+    if (!token || !uid) {
+        return NextResponse.json({ msg: "Authentication failed. No token or credentials." }, { status: 401 });
     }
 
-    const { token, uid, authPref } = login;
     const headers = {
       Accept: "application/json",
       Authorization: `${authPref}${token}`,

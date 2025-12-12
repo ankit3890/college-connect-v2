@@ -176,15 +176,25 @@ export async function loginToCyberVidya(
  */
 export async function getProfileFromCyberVidya(
   cyberId: string,
-  cyberPass: string
+  cyberPass: string,
+  // NEW: Optional pre-authenticated session
+  existingSession?: { token: string; uid: number; authPref: string }
 ): Promise<CyberProfile | null> {
-  const login = await loginToCyberVidya(cyberId, cyberPass);
-  if (!login) {
-    console.error("⚠️ loginToCyberVidya returned null");
-    return null;
+  let token = existingSession?.token;
+  let uid = existingSession?.uid;
+  let authPref = existingSession?.authPref;
+
+  if (!token || !uid) {
+      const login = await loginToCyberVidya(cyberId, cyberPass);
+      if (!login) {
+        console.error("⚠️ loginToCyberVidya returned null");
+        return null;
+      }
+      token = login.token;
+      uid = login.uid;
+      authPref = login.authPref;
   }
 
-  const { token, uid, authPref } = login;
   console.log("✅ Got CyberVidya token + uid:", { uid });
 
   const headers: HeadersInit = {
@@ -193,32 +203,41 @@ export async function getProfileFromCyberVidya(
     Uid: String(uid),
   };
 
-  try {
-    // -----------------------------
-    // 1) /api/admin/user/my-profile
-    // -----------------------------
-    const profileRes = await fetch(`${CYBER_BASE}/api/admin/user/my-profile`, {
-      method: "GET",
-      headers,
-    });
-
-    console.log("🔎 my-profile status:", profileRes.status);
-    const profileText = await profileRes.text();
-    console.log("📦 my-profile raw:", profileText);
-
     let profileData: ProfileData = {};
+
     try {
-      const body = JSON.parse(profileText);
-      profileData = body.data || body;
-    } catch {
-      console.error("❌ Could not parse my-profile JSON");
+        // -----------------------------
+        // 1) /api/admin/user/my-profile
+        // -----------------------------
+        // Note: This endpoint is often blocked server-side (401/403). 
+        // We wrap it in a try-catch so it doesn't break the whole sync if it fails.
+        const profileRes = await fetch(`${CYBER_BASE}/api/admin/user/my-profile`, {
+          method: "GET",
+          headers,
+        });
+
+        console.log("🔎 my-profile status:", profileRes.status);
+        if (profileRes.ok) {
+            const profileText = await profileRes.text();
+            try {
+              const body = JSON.parse(profileText);
+              profileData = body.data || body;
+              console.log("✅ my-profile data:", profileData);
+            } catch {
+              console.error("❌ Could not parse my-profile JSON");
+            }
+        } else {
+             console.warn("⚠️ my-profile fetch failed (likely blocked). Continuing with attendance data only.");
+        }
+    } catch (e) {
+        console.warn("⚠️ my-profile fetch threw error. Continuing...", e);
     }
-    console.log("✅ my-profile data:", profileData);
 
     // ---------------------------------------------------------
     // 2) /api/attendance/course/component/student  (your JSON)
     // ---------------------------------------------------------
-    const attendanceRes = await fetch(
+    try {
+        const attendanceRes = await fetch(
       `${CYBER_BASE}/api/attendance/course/component/student`,
       {
         method: "GET",
