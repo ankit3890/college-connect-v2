@@ -5,8 +5,9 @@ FROM base AS deps
 WORKDIR /app
 
 # Install dependencies based on the preferred package manager
-COPY package.json package-lock.json* ./
-RUN npm install --production=false
+# Only copy package.json to avoid platform-specific lock conflicts
+COPY package.json ./
+RUN npm install --omit=optional
 
 # Rebuild the source code only when needed
 FROM base AS builder
