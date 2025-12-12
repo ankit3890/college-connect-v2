@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { captureToken } from "@/lib/remote-init";
 import { verifyToken } from "@/lib/auth";
 
-export async function POST(req: NextRequest, { params }: { params: { sessionId: string } }) {
+export async function POST(req: NextRequest, { params }: { params: Promise<{ sessionId: string }> }) {
   try {
     // Basic Auth Check (optional if capture is public, but safer to check)
     const authHeader = req.headers.get("authorization");
@@ -15,7 +15,8 @@ export async function POST(req: NextRequest, { params }: { params: { sessionId: 
       return NextResponse.json({ ok: false, error: "Invalid Token" }, { status: 401 });
     }
 
-    const result = await captureToken(params.sessionId);
+    const { sessionId } = await params;
+    const result = await captureToken(sessionId);
     return NextResponse.json(result);
 
   } catch (err: any) {
