@@ -1,5 +1,4 @@
 import { spawn, ChildProcess } from "child_process";
-import { spawn, ChildProcess } from "child_process";
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { Browser, Page } from "puppeteer";
