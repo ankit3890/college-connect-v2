@@ -22,6 +22,9 @@ interface ActiveSession {
 const activeSessions = new Map<string, ActiveSession>();
 
 async function startPuppeteerBrowser(): Promise<Browser> {
+  // force display env var to ensure chrome finds Xvfb
+  process.env.DISPLAY = ":99";
+  
   const browser = await puppeteer.launch({
     executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
     headless: false,
