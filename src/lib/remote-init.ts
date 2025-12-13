@@ -30,6 +30,7 @@ async function startPuppeteerBrowser(): Promise<Browser> {
       "--disable-dev-shm-usage",
       "--remote-debugging-port=9222",
       "--display=:99",
+      "--remote-allow-origins=*",
       "--window-size=1280,1400"
     ],
     defaultViewport: { width: 1280, height: 1400 },
