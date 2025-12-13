@@ -119,9 +119,17 @@ function startProxy(targetPort: number): Promise<http.Server> {
 
       const proxyReq = http.request(options);
       proxyReq.on("upgrade", (proxyRes, proxySocket, proxyHead) => {
-        socket.write("HTTP/1.1 101 Switching Protocols\r\n" +
-                     "Upgrade: websocket\r\n" +
-                     "Connection: Upgrade\r\n\r\n");
+        let headers = "HTTP/1.1 101 Switching Protocols\r\n";
+        for (const [key, value] of Object.entries(proxyRes.headers)) {
+          if (Array.isArray(value)) {
+            value.forEach(v => headers += `${key}: ${v}\r\n`);
+          } else {
+            headers += `${key}: ${value}\r\n`;
+          }
+        }
+        headers += "\r\n";
+        
+        socket.write(headers);
         proxySocket.pipe(socket);
         socket.pipe(proxySocket);
       });
