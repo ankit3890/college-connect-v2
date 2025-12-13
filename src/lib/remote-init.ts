@@ -1,4 +1,5 @@
 import { spawn, ChildProcess } from "child_process";
+import http from "http";
 import puppeteer from "puppeteer-extra";
 // import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { Browser, Page } from "puppeteer";
@@ -13,6 +14,7 @@ interface ActiveSession {
   page: Page;
   ngrokProc: ChildProcess;
   ngrokUrl: string;
+  proxyServer: http.Server;
   ownerId: string;
   createdAt: number;
 }
@@ -85,6 +87,56 @@ function startNgrok(port = 9222): Promise<{ proc: ChildProcess; url: string }> {
     });
   });
 }
+// Proxy to bypass Host header check
+function startProxy(targetPort: number): Promise<http.Server> {
+  return new Promise((resolve) => {
+    const server = http.createServer((req, res) => {
+      const options = {
+        hostname: "127.0.0.1",
+        port: targetPort,
+        path: req.url,
+        method: req.method,
+        headers: { ...req.headers, host: `localhost:${targetPort}` }
+      };
+      
+      const proxyReq = http.request(options, (proxyRes) => {
+        res.writeHead(proxyRes.statusCode || 500, proxyRes.headers);
+        proxyRes.pipe(res);
+      });
+
+      req.pipe(proxyReq);
+      proxyReq.on("error", () => { res.writeHead(500); res.end(); });
+    });
+
+    server.on("upgrade", (req, socket, head) => {
+      const options = {
+        hostname: "127.0.0.1",
+        port: targetPort,
+        path: req.url,
+        method: "GET",
+        headers: { ...req.headers, host: `localhost:${targetPort}`, origin: `http://localhost:${targetPort}` }
+      };
+
+      const proxyReq = http.request(options);
+      proxyReq.on("upgrade", (proxyRes, proxySocket, proxyHead) => {
+        socket.write("HTTP/1.1 101 Switching Protocols\r\n" +
+                     "Upgrade: websocket\r\n" +
+                     "Connection: Upgrade\r\n\r\n");
+        proxySocket.pipe(socket);
+        socket.pipe(proxySocket);
+      });
+      proxyReq.on("error", () => socket.end());
+      proxyReq.end();
+    });
+
+    // Listen on a random port or fixed, let's use 0 for random (ngrok finds it)
+    // Actually fixed 9223 is safer for now to align with known range
+    server.listen(9223, () => {
+      console.log(`[Proxy] Listening on 9223 -> Rewriting Host to localhost:${targetPort}`);
+      resolve(server);
+    });
+  });
+}
 
 export async function startSession({ ownerId, loginUrl }: { ownerId: string; loginUrl?: string }) {
   console.log(`[Remote] Starting session for ${ownerId}...`);
@@ -106,12 +158,16 @@ export async function startSession({ ownerId, loginUrl }: { ownerId: string; log
   console.log("[Remote] Waiting for port 9222...");
   await waitPort({ host: "127.0.0.1", port: 9222, timeout: 15000 });
 
-  // start ngrok to expose devtools
+  // start proxy to bypass Host check
+  console.log("[Remote] Starting Proxy...");
+  const proxyServer = await startProxy(9222);
+
+  // start ngrok pointing to PROXY (9223)
   console.log("[Remote] Starting Ngrok...");
-  const { proc, url } = await startNgrok(9222);
+  const { proc, url } = await startNgrok(9223);
 
   const sessionId = Math.random().toString(36).slice(2, 10);
-  activeSessions.set(sessionId, { browser, page, ngrokProc: proc, ngrokUrl: url, ownerId, createdAt: Date.now() });
+  activeSessions.set(sessionId, { browser, page, ngrokProc: proc, ngrokUrl: url, proxyServer, ownerId, createdAt: Date.now() });
 
   // set an automatic cleanup (e.g., 6 minutes)
   setTimeout(() => cleanupSession(sessionId), 1000 * 60 * 6);
@@ -163,5 +219,6 @@ export async function cleanupSession(sessionId: string) {
   console.log(`[Remote] Cleaning up session ${sessionId}`);
   try { await s.browser.close(); } catch (e) {}
   try { s.ngrokProc.kill(); } catch (e) {}
+  try { s.proxyServer.close(); } catch (e) {}
   activeSessions.delete(sessionId);
 }
